@@ -98,24 +98,26 @@ npx tsx src/cli.ts <program-address> --dump-idls ./idls
 
 ## Web App
 
-A Next.js UI and HTTP API live under `web/`. The UI exposes the same three capabilities as the API: **current IDL** (`GET /api/idl`), **latest PMP + Anchor** (`GET /api/latest`), and **full history** (`POST /api/history`).
+A Next.js UI and HTTP API live under `web/`. The UI exposes the same three capabilities as the API: **current IDL** (`GET /api/idl`), **latest PMP + Anchor** (`GET /api/latest`), and **full history** (`POST /api/history`). A cluster switcher (mainnet/devnet) sits in the header and is threaded through every API request. Testnet is intentionally not supported since the Program Metadata program isn't deployed there.
 
 ```bash
 cd web
-cp .env.example .env.local   # set RPC_URL (see .env.example)
+cp .env.example .env.local   # set RPC_MAINNET / RPC_DEVNET
 npm install
 npm run dev                   # http://localhost:3000
 ```
 
 The IDL **CLI** (`src/cli.ts`) lives at the **repository root**, not inside `web/`. After `cd web`, run the CLI from the parent directory (`cd ..`) or use `npx tsx ../src/cli.ts …` so the path resolves correctly.
 
-Deploy the app to Vercel by setting the project **root directory** to `web` and adding `RPC_URL` in the environment.
+Deploy the app to Vercel by setting the project **root directory** to `web` and adding `RPC_MAINNET` and/or `RPC_DEVNET` in the environment. A legacy `RPC_URL` is still honored as a fallback for `mainnet-beta` only.
 
 IDL resolution order (per program): **canonical PMP** (seed `idl`) → **non-canonical PMP** with `IDL_FALLBACK_PMP_AUTHORITY` (`fndnu15…`, set to the `UPLOAD_KEYPAIR` pubkey in `src/pmp-idl.ts`) → **Anchor**.
 
 ### API Endpoints
 
-**`GET /api/idl?programId=<address>`** — Returns the **current** IDL (canonical PMP, then non-canonical PMP via the fallback authority, then Anchor). Response shape:
+All routes accept a **`cluster`** parameter (`mainnet-beta` (default) or `devnet`). For `GET` routes pass it as a query parameter; for `POST /api/history` include it in the JSON body. A request to a cluster whose env var is unset returns `500` naming the missing variable.
+
+**`GET /api/idl?programId=<address>&cluster=<cluster>`** — Returns the **current** IDL (canonical PMP, then non-canonical PMP via the fallback authority, then Anchor). Response shape:
 
 ```json
 {
@@ -125,11 +127,11 @@ IDL resolution order (per program): **canonical PMP** (seed `idl`) → **non-can
 }
 ```
 
-`type` is `"pmp"` or `"anchor"`. The `idl` field is **JSON-parsed when possible**; if parsing fails, it is returned as a **string** (raw IDL text). Returns `400` for a missing or invalid `programId`, `404` when neither source has an IDL, `500` when `RPC_URL` is unset on the server, or `500` on unexpected errors.
+`type` is `"pmp"` or `"anchor"`. The `idl` field is **JSON-parsed when possible**; if parsing fails, it is returned as a **string** (raw IDL text). Returns `400` for a missing or invalid `programId` or `cluster`, `404` when neither source has an IDL, `500` when the cluster's RPC env var is unset on the server, or `500` on unexpected errors.
 
-**`GET /api/latest?programId=<address>`** — Returns **both** current sources side by side (when present): derived `pmpAddress`, `anchorAddress`, and two arrays `pmp` and `anchor`, each with at most one entry including decoded version metadata and **full `content` string** for the live IDL. Useful when a program has migrated or you want to compare PMP vs Anchor without choosing a single winner.
+**`GET /api/latest?programId=<address>&cluster=<cluster>`** — Returns **both** current sources side by side (when present): derived `pmpAddress`, `anchorAddress`, and two arrays `pmp` and `anchor`, each with at most one entry including decoded version metadata and **full `content` string** for the live IDL. Useful when a program has migrated or you want to compare PMP vs Anchor without choosing a single winner.
 
-**`POST /api/history`** — Reconstructs **distinct** IDL versions over time. Body: `{ "programId": "<address>" }`.
+**`POST /api/history`** — Reconstructs **distinct** IDL versions over time. Body: `{ "programId": "<address>", "cluster": "<cluster>" }` (cluster defaults to `mainnet-beta` when omitted).
 
 Response (200):
 

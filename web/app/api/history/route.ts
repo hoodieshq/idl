@@ -5,6 +5,11 @@ import { reconstructPmpHistory } from '@core/program-metadata';
 import { reconstructAnchorHistory, findAnchorIdlAddress } from '@core/anchor';
 import { buildPmpIdlLookups } from '@core/pmp-idl';
 import type { Snapshot } from '@core/rpc';
+import {
+  envVarForCluster,
+  parseCluster,
+  rpcUrlForCluster,
+} from '@/lib/rpc';
 
 export const maxDuration = 60;
 
@@ -88,9 +93,22 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid program ID' }, { status: 400 });
     }
 
-    const rpcUrl = process.env.RPC_URL;
+    const cluster = parseCluster(
+      typeof body.cluster === 'string' ? body.cluster : null,
+    );
+    if (!cluster) {
+      return NextResponse.json(
+        { error: 'Invalid cluster (expected mainnet-beta or devnet)' },
+        { status: 400 },
+      );
+    }
+
+    const rpcUrl = rpcUrlForCluster(cluster);
     if (!rpcUrl) {
-      return NextResponse.json({ error: 'RPC_URL not configured on server' }, { status: 500 });
+      return NextResponse.json(
+        { error: `${envVarForCluster(cluster)} not configured on server` },
+        { status: 500 },
+      );
     }
 
     const rpc = createSolanaRpc(rpcUrl);

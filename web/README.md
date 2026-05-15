@@ -66,20 +66,22 @@ npx tsx src/cli.ts <program-address> --dump-idls ./idls
 
 ## Web App
 
-A Next.js web interface is included in the `web/` directory.
+A Next.js web interface is included in the `web/` directory. The header has a cluster switcher (mainnet/devnet) that is sent through to every API request. Testnet is intentionally not supported since the Program Metadata program isn't deployed there.
 
 ```bash
 cd web
-cp .env.example .env.local   # edit with your RPC URL
+cp .env.example .env.local   # set RPC_MAINNET / RPC_DEVNET
 npm install
 npm run dev                   # http://localhost:3000
 ```
 
-Deploy to Vercel by setting the root directory to `web` and adding `RPC_URL` as an environment variable.
+Deploy to Vercel by setting the root directory to `web` and adding `RPC_MAINNET` and/or `RPC_DEVNET` in the environment. A legacy `RPC_URL` is still accepted as a fallback for `mainnet-beta` only.
 
 ### API Endpoints
 
-**`GET /api/idl?programId=<address>`** -- Returns the current IDL for a program. Checks PMP first, falls back to Anchor.
+All endpoints accept a `cluster` parameter (`mainnet-beta` (default) or `devnet`) — query string on `GET`, JSON body on `POST`. A request to a cluster whose RPC env var is unset returns `500` with the missing var name.
+
+**`GET /api/idl?programId=<address>&cluster=<cluster>`** -- Returns the current IDL for a program. Checks PMP first (canonical, then the `IDL_FALLBACK_PMP_AUTHORITY` non-canonical authority), falls back to Anchor.
 
 ```json
 {
@@ -91,7 +93,7 @@ Deploy to Vercel by setting the root directory to `web` and adding `RPC_URL` as 
 
 Returns `404` if no IDL is found for either format.
 
-**`POST /api/history`** -- Reconstructs the full IDL version history (all past versions with slot ranges). Send `{ "programId": "..." }` as JSON body.
+**`POST /api/history`** -- Reconstructs the full IDL version history (all past versions with slot ranges). Send `{ "programId": "...", "cluster": "..." }` as JSON body.
 
 ## Library Usage
 

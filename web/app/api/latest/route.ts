@@ -4,6 +4,11 @@ import { fetchCurrentAnchorIdlString } from '@core/current-idl';
 import { findAnchorIdlAddress } from '@core/anchor';
 import { fetchPmpIdlContentResolved } from '@core/pmp-idl';
 import { findMetadataPda } from '@solana-program/program-metadata';
+import {
+  envVarForCluster,
+  parseCluster,
+  rpcUrlForCluster,
+} from '@/lib/rpc';
 
 export const maxDuration = 30;
 
@@ -81,9 +86,20 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const rpcUrl = process.env.RPC_URL;
+    const cluster = parseCluster(req.nextUrl.searchParams.get('cluster'));
+    if (!cluster) {
+      return NextResponse.json(
+        { error: 'Invalid cluster (expected mainnet-beta or devnet)' },
+        { status: 400 },
+      );
+    }
+
+    const rpcUrl = rpcUrlForCluster(cluster);
     if (!rpcUrl) {
-      return NextResponse.json({ error: 'RPC_URL not configured on server' }, { status: 500 });
+      return NextResponse.json(
+        { error: `${envVarForCluster(cluster)} not configured on server` },
+        { status: 500 },
+      );
     }
 
     const rpc = createSolanaRpc(rpcUrl);

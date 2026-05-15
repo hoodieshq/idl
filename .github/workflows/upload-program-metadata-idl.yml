@@ -6,7 +6,6 @@
 #   UPLOAD_KEYPAIR     — full Solana keypair JSON array (same format as ~/.config/solana/id.json).
 #                        This wallet signs as authority; it also pays fees unless you set PAYER_KEYPAIR.
 #   RPC_MAINNET        — HTTPS RPC for mainnet-beta.
-#   RPC_TESTNET        — HTTPS RPC for testnet.
 #   RPC_DEVNET         — HTTPS RPC for devnet.
 #
 # Optional secrets:
@@ -16,7 +15,8 @@
 # workflow's keypair is never the program upgrade authority. Canonical uploads must be done out-of-band
 # from a runner that holds the program's upgrade authority key.
 #
-# Set `cluster` to `all` to fan out to mainnet-beta, testnet, and devnet in parallel.
+# Set `cluster` to `all` to fan out to mainnet-beta and devnet in parallel.
+# (Testnet is intentionally omitted — the Program Metadata program is not deployed there.)
 
 name: Upload IDL to Program Metadata
 
@@ -35,13 +35,12 @@ on:
         required: true
         type: string
       cluster:
-        description: Solana cluster ("all" fans out to mainnet-beta + testnet + devnet)
+        description: Solana cluster ("all" fans out to mainnet-beta + devnet)
         required: true
         type: choice
         options:
           - all
           - mainnet-beta
-          - testnet
           - devnet
         default: mainnet-beta
 
@@ -57,7 +56,7 @@ jobs:
         run: |
           set -euo pipefail
           if [ "$CLUSTER" = "all" ]; then
-            echo 'clusters=["mainnet-beta","testnet","devnet"]' >> "$GITHUB_OUTPUT"
+            echo 'clusters=["mainnet-beta","devnet"]' >> "$GITHUB_OUTPUT"
           else
             echo "clusters=[\"$CLUSTER\"]" >> "$GITHUB_OUTPUT"
           fi
@@ -146,14 +145,12 @@ jobs:
         env:
           CLUSTER: ${{ matrix.cluster }}
           RPC_MAINNET: ${{ secrets.RPC_MAINNET }}
-          RPC_TESTNET: ${{ secrets.RPC_TESTNET }}
           RPC_DEVNET: ${{ secrets.RPC_DEVNET }}
           PROGRAM_ID: ${{ inputs.program_id }}
         run: |
           set -euo pipefail
           case "${CLUSTER}" in
             mainnet-beta) RPC_URL="${RPC_MAINNET:-}" ;;
-            testnet)      RPC_URL="${RPC_TESTNET:-}" ;;
             devnet)       RPC_URL="${RPC_DEVNET:-}" ;;
             *)
               echo "Unknown cluster: ${CLUSTER}"
@@ -161,7 +158,7 @@ jobs:
               ;;
           esac
           if [ -z "${RPC_URL:-}" ]; then
-            echo "Missing RPC URL for cluster ${CLUSTER}. Set the matching secret (RPC_MAINNET, RPC_TESTNET, or RPC_DEVNET)."
+            echo "Missing RPC URL for cluster ${CLUSTER}. Set the matching secret (RPC_MAINNET or RPC_DEVNET)."
             exit 1
           fi
           echo "Using RPC for cluster: ${CLUSTER}"

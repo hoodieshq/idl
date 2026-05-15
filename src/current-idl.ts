@@ -10,7 +10,7 @@ import { readU32LE } from './rpc.js';
 
 const zlibInflate = promisify(inflate);
 
-/** RPC handle from `createSolanaRpc` (mainnet/devnet/testnet URLs). */
+/** RPC handle from `createSolanaRpc` (mainnet or devnet URLs; PMP isn't deployed on testnet). */
 export type SolanaRpcClient = ReturnType<typeof createSolanaRpc>;
 
 export type CurrentIdlSource = 'pmp' | 'anchor';

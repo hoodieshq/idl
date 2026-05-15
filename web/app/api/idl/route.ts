@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Address, createSolanaRpc } from '@solana/kit';
 import { fetchCurrentIdlPreferPmp } from '@core/current-idl';
+import {
+  envVarForCluster,
+  parseCluster,
+  rpcUrlForCluster,
+} from '@/lib/rpc';
 
 export const maxDuration = 30;
 
@@ -12,9 +17,20 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Missing or invalid programId query parameter' }, { status: 400 });
     }
 
-    const rpcUrl = process.env.RPC_URL;
+    const cluster = parseCluster(req.nextUrl.searchParams.get('cluster'));
+    if (!cluster) {
+      return NextResponse.json(
+        { error: 'Invalid cluster (expected mainnet-beta or devnet)' },
+        { status: 400 },
+      );
+    }
+
+    const rpcUrl = rpcUrlForCluster(cluster);
     if (!rpcUrl) {
-      return NextResponse.json({ error: 'RPC_URL not configured on server' }, { status: 500 });
+      return NextResponse.json(
+        { error: `${envVarForCluster(cluster)} not configured on server` },
+        { status: 500 },
+      );
     }
 
     const rpc = createSolanaRpc(rpcUrl);

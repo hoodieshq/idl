@@ -435,7 +435,7 @@ const program = new Command()
 
             const result = await fetchCurrentIdlPreferPmp(rpc, addr, {
                 seed,
-                authority: authority ?? null,
+                ...(authority !== undefined ? { authority } : {}),
             });
             if (!result) {
                 console.error(

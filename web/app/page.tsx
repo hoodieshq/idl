@@ -4,6 +4,13 @@ import { useState, useCallback } from 'react';
 
 type SearchMode = 'current' | 'latest' | 'history';
 
+type Cluster = 'mainnet-beta' | 'devnet';
+
+const CLUSTERS: { id: Cluster; label: string }[] = [
+  { id: 'mainnet-beta', label: 'mainnet' },
+  { id: 'devnet', label: 'devnet' },
+];
+
 type IdlVersion = {
   type: 'pmp' | 'anchor';
   version: string | null;
@@ -175,6 +182,33 @@ function ModeTabs({
   );
 }
 
+function ClusterTabs({
+  cluster,
+  onChange,
+}: {
+  cluster: Cluster;
+  onChange: (c: Cluster) => void;
+}) {
+  return (
+    <div className="inline-flex items-center gap-1 p-1 rounded-lg border border-zinc-800 bg-zinc-950">
+      {CLUSTERS.map((c) => (
+        <button
+          key={c.id}
+          type="button"
+          onClick={() => onChange(c.id)}
+          className={`px-2.5 py-1 rounded-md text-[11px] font-medium transition-colors cursor-pointer ${
+            cluster === c.id
+              ? 'bg-zinc-100 text-zinc-900'
+              : 'text-zinc-400 hover:text-zinc-200'
+          }`}
+        >
+          {c.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 function CurrentIdlPanel({ data }: { data: CurrentIdlResponse }) {
   const display =
     typeof data.idl === 'string' ? data.idl : JSON.stringify(data.idl, null, 2);
@@ -280,6 +314,7 @@ function LatestPanel({ data }: { data: LatestResponse }) {
 export default function Home() {
   const [programId, setProgramId] = useState('');
   const [mode, setMode] = useState<SearchMode>('current');
+  const [cluster, setCluster] = useState<Cluster>('mainnet-beta');
   const [loading, setLoading] = useState(false);
   const [currentData, setCurrentData] = useState<CurrentIdlResponse | null>(null);
   const [latestData, setLatestData] = useState<LatestResponse | null>(null);
@@ -302,7 +337,9 @@ export default function Home() {
 
     try {
       if (mode === 'current') {
-        const res = await fetch(`/api/idl?programId=${encodeURIComponent(id)}`);
+        const res = await fetch(
+          `/api/idl?programId=${encodeURIComponent(id)}&cluster=${cluster}`,
+        );
         const json = (await res.json()) as CurrentIdlResponse & { error?: string };
         if (!res.ok) {
           setError(json.error ?? `HTTP ${res.status}`);
@@ -310,7 +347,9 @@ export default function Home() {
           setCurrentData(json as CurrentIdlResponse);
         }
       } else if (mode === 'latest') {
-        const res = await fetch(`/api/latest?programId=${encodeURIComponent(id)}`);
+        const res = await fetch(
+          `/api/latest?programId=${encodeURIComponent(id)}&cluster=${cluster}`,
+        );
         const json = (await res.json()) as LatestResponse & { error?: string };
         if (!res.ok) {
           setError(json.error ?? `HTTP ${res.status}`);
@@ -321,7 +360,7 @@ export default function Home() {
         const res = await fetch('/api/history', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ programId: id }),
+          body: JSON.stringify({ programId: id, cluster }),
         });
         const json = await res.json();
         if (!res.ok) {
@@ -335,7 +374,7 @@ export default function Home() {
     } finally {
       setLoading(false);
     }
-  }, [programId, mode, clearResults]);
+  }, [programId, mode, cluster, clearResults]);
 
   const totalHistoryIdls = historyData ? historyData.pmp.length + historyData.anchor.length : 0;
 
@@ -352,6 +391,15 @@ export default function Home() {
         <div className="max-w-4xl mx-auto px-6 py-4 flex items-center gap-3">
           <h1 className="text-lg font-semibold tracking-tight">IDL Explorer</h1>
           <span className="text-xs text-zinc-500 border border-zinc-800 rounded px-1.5 py-0.5">Solana</span>
+          <div className="ml-auto">
+            <ClusterTabs
+              cluster={cluster}
+              onChange={(c) => {
+                setCluster(c);
+                clearResults();
+              }}
+            />
+          </div>
         </div>
       </header>
 
