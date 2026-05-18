@@ -12,10 +12,7 @@ export {
 
 export type { VirtualState } from './program-metadata.js';
 
-export {
-    reconstructAnchorHistory,
-    findAnchorIdlAddress,
-} from './anchor.js';
+export { reconstructAnchorHistory, findAnchorIdlAddress } from './anchor.js';
 
 export type { Snapshot } from './rpc.js';
 
@@ -25,9 +22,5 @@ export type { CurrentIdlResponse, CurrentIdlSource, SolanaRpcClient } from './cu
 export { fetchLatestIdls } from './latest-idl.js';
 export type { LatestIdls, LatestIdlVersion, IdlSource } from './latest-idl.js';
 
-export {
-    IDL_FALLBACK_PMP_AUTHORITY,
-    buildPmpIdlLookups,
-    fetchPmpIdlContentResolved,
-} from './pmp-idl.js';
+export { IDL_FALLBACK_PMP_AUTHORITY, buildPmpIdlLookups, fetchPmpIdlContentResolved } from './pmp-idl.js';
 export type { PmpIdlLookup, ResolvedPmpIdl } from './pmp-idl.js';

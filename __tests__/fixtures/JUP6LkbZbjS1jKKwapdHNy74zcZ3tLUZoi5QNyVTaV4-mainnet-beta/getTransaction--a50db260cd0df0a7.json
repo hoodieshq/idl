@@ -1,0 +1,89 @@
+{
+  "slot": {
+    "__bigint": "401459706"
+  },
+  "transaction": {
+    "signatures": [
+      "3Ro927UwiqeugSFSWaFv5b9EWxaUoow8JqMnejt9Dw3Gi3fir8TuCiivSBiFUhn8jksqmfZ5dWoExEZxSMdKN6Xg"
+    ],
+    "message": {
+      "header": {
+        "numRequiredSignatures": 1,
+        "numReadonlySignedAccounts": 0,
+        "numReadonlyUnsignedAccounts": 1
+      },
+      "accountKeys": [
+        "9u9iZBWqGsp5hXBxkVZtBTuLSGNAG9gEQLgpuVw39ASg",
+        "4syFK4HAViyRxooBFPY6N7XMjfaTvUAeMSwvvZDwMaff",
+        "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4"
+      ],
+      "recentBlockhash": "G3ehGbfdoV65vE1rqXQ9za4JfWoZSkMtR5awrZhJJfqg",
+      "instructions": [
+        {
+          "programIdIndex": 2,
+          "accounts": [
+            1,
+            0
+          ],
+          "data": "L1xeEvzp7JZ6QWKsyob86SSe7GQxkutgQsHWmCtx7katG5P6Cg8WwqFuLyt57FZbZ1BnBTBbyM43Wj57K3rYis1Pu53PXzaWJVEiMxzz3wnf9R8oLamXYLhDe2onivCfesB9G3SXLhBUHDtTUAyUCcuAHeiXS4YHrLRKqqdjkTV8cvEUcTPgk3JVrfw4Ly2X84CD4RNDbA9qN9qdwMweqnft4mCbRmgdrT3EGKu5fQCAMQnPu6ub7VT1MS9DSUFGi8tPZVhKE6wZsJhZMLvxhjUF2H48bR2Y29c97mTDgBccQxbKjpS9dQz8DDb4ptnHn6pyzk8y1QEicn2aj8mpCkSqPZbpkdWnKMqZrmBpebbNuHnkAZRtdpVWELKue5EfvLwu25PJfF8vEFz9Men9hE7iDcA",
+          "stackHeight": 1
+        }
+      ]
+    }
+  },
+  "meta": {
+    "err": null,
+    "status": {
+      "Ok": null
+    },
+    "fee": {
+      "__bigint": "5000"
+    },
+    "preBalances": [
+      {
+        "__bigint": "10087002789"
+      },
+      {
+        "__bigint": "28257600"
+      },
+      {
+        "__bigint": "5714266356"
+      }
+    ],
+    "postBalances": [
+      {
+        "__bigint": "10086997789"
+      },
+      {
+        "__bigint": "28257600"
+      },
+      {
+        "__bigint": "5714266356"
+      }
+    ],
+    "innerInstructions": [],
+    "logMessages": [
+      "Program JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4 invoke [1]",
+      "Program log: Instruction: IdlWrite",
+      "Program JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4 consumed 998 of 200000 compute units",
+      "Program JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4 success"
+    ],
+    "preTokenBalances": [],
+    "postTokenBalances": [],
+    "rewards": [],
+    "loadedAddresses": {
+      "writable": [],
+      "readonly": []
+    },
+    "computeUnitsConsumed": {
+      "__bigint": "998"
+    }
+  },
+  "version": "legacy",
+  "blockTime": {
+    "__bigint": "1771563562"
+  },
+  "transactionIndex": {
+    "__bigint": "997"
+  }
+}

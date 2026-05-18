@@ -1,0 +1,89 @@
+{
+  "slot": {
+    "__bigint": "346229820"
+  },
+  "transaction": {
+    "signatures": [
+      "3Zce8fhFxAQq8rfYfM9VL7vyhW4AYvmxmv31cuswCgbuTDchXFSupnwKeXGNvwdfXymoxtCRwssG1DvBq1is4Xes"
+    ],
+    "message": {
+      "header": {
+        "numRequiredSignatures": 1,
+        "numReadonlySignedAccounts": 0,
+        "numReadonlyUnsignedAccounts": 1
+      },
+      "accountKeys": [
+        "9u9iZBWqGsp5hXBxkVZtBTuLSGNAG9gEQLgpuVw39ASg",
+        "CXkV8SP4mDHb1J1NudCULVZjbwZZHGaPsTBTHTvUasvN",
+        "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4"
+      ],
+      "recentBlockhash": "6CRurAPuAjeydcRHUM5P5ffg485teRCPfZcns5vT8hrd",
+      "instructions": [
+        {
+          "programIdIndex": 2,
+          "accounts": [
+            1,
+            0
+          ],
+          "data": "DWRQWCi1FWLEPPKBw5rLpTcXq2bbVDsrEQxcjfkeNybRAcsRjTzpyWRU4yQNByQQmr7Sd4kWe1gRQNGX91RiAXxDvFVYBuY1UnWXnrWLinXH2ejvHMtiRm1HvkYd9zdsDCz4Quhve4AvtvpAaHDJWSHb6BxTYhukTYr4dcpskLp7EULNPDjif4JzhiMhTBpJTvTzeRrybmVrLo1CAJAgfKiyieYSUmCvsanmEa9cwdqH3yhoSFqDfyMuwq9pY9WcTeULYiMs7PARvcdnZjBbbFGS",
+          "stackHeight": 1
+        }
+      ]
+    }
+  },
+  "meta": {
+    "err": null,
+    "status": {
+      "Ok": null
+    },
+    "fee": {
+      "__bigint": "5000"
+    },
+    "preBalances": [
+      {
+        "__bigint": "17639447832"
+      },
+      {
+        "__bigint": "23413440"
+      },
+      {
+        "__bigint": "1141440"
+      }
+    ],
+    "postBalances": [
+      {
+        "__bigint": "17639442832"
+      },
+      {
+        "__bigint": "23413440"
+      },
+      {
+        "__bigint": "1141440"
+      }
+    ],
+    "innerInstructions": [],
+    "logMessages": [
+      "Program JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4 invoke [1]",
+      "Program log: Instruction: IdlWrite",
+      "Program JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4 consumed 1254 of 200000 compute units",
+      "Program JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4 success"
+    ],
+    "preTokenBalances": [],
+    "postTokenBalances": [],
+    "rewards": [],
+    "loadedAddresses": {
+      "writable": [],
+      "readonly": []
+    },
+    "computeUnitsConsumed": {
+      "__bigint": "1254"
+    }
+  },
+  "version": "legacy",
+  "blockTime": {
+    "__bigint": "1749700399"
+  },
+  "transactionIndex": {
+    "__bigint": "1148"
+  }
+}

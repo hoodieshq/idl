@@ -1,0 +1,89 @@
+{
+  "slot": {
+    "__bigint": "356924912"
+  },
+  "transaction": {
+    "signatures": [
+      "PA7qiki8cysBsBn3SrhsZ3JyRxxDuevxwuL6eYxyymyRYgk1UYjiGC5xFixi7biNHE8sfMqQLuKvv6mkrYteRVx"
+    ],
+    "message": {
+      "header": {
+        "numRequiredSignatures": 1,
+        "numReadonlySignedAccounts": 0,
+        "numReadonlyUnsignedAccounts": 1
+      },
+      "accountKeys": [
+        "9u9iZBWqGsp5hXBxkVZtBTuLSGNAG9gEQLgpuVw39ASg",
+        "1i99MHS9xL3dx3txvDaDqgYGT4kSNNaB6QLVQ34f7qY",
+        "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4"
+      ],
+      "recentBlockhash": "AeVhT7wjnSbpJ1ECwa2wX6XT8oHuCcv2B58ScGVxf2bn",
+      "instructions": [
+        {
+          "programIdIndex": 2,
+          "accounts": [
+            1,
+            0
+          ],
+          "data": "s583eRW4QKLsB6AxbbFcmJTJggkq1qYSyt5d83cebKS3MyD45GV1h1CsT1mAzgTSn3NidQW7A6968cG553vHAvWNgYkbBP3VfuiSrEZb7qX5xxiKZbZyg1WmuscGNkUNH1j7tT7T8kAR1hfA1qKvoNgZMpdqpPDJdMJitkBFYHTsSTKszVwR8R4XMDwoW6KefcR8PvJ6gBfy7aurDGjneUkaMz81obw2zcC5wHBFHoXv9E99TbpCSmv1BDJtCSufuRtL6VfAoyFLFS1vN14rJfi66AxnUZF5bNEqQR6XNCkoQ13EbfLo7tfs4f9XvRVK6V43uEFfXQHqH9gQxuaHaTa7FzTtafPju7crVKEe9WVnESW7G5bVqcdwdpFshZhKXjeG6N4TkbX8Amq42YM9T2SnRvAFhHNCfQqLZ4N1xJozRgv11fbnsGevz5sAfTRX1",
+          "stackHeight": 1
+        }
+      ]
+    }
+  },
+  "meta": {
+    "err": null,
+    "status": {
+      "Ok": null
+    },
+    "fee": {
+      "__bigint": "5000"
+    },
+    "preBalances": [
+      {
+        "__bigint": "18549191028"
+      },
+      {
+        "__bigint": "24276480"
+      },
+      {
+        "__bigint": "2653141764"
+      }
+    ],
+    "postBalances": [
+      {
+        "__bigint": "18549186028"
+      },
+      {
+        "__bigint": "24276480"
+      },
+      {
+        "__bigint": "2653141764"
+      }
+    ],
+    "innerInstructions": [],
+    "logMessages": [
+      "Program JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4 invoke [1]",
+      "Program log: Instruction: IdlWrite",
+      "Program JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4 consumed 1254 of 200000 compute units",
+      "Program JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4 success"
+    ],
+    "preTokenBalances": [],
+    "postTokenBalances": [],
+    "rewards": [],
+    "loadedAddresses": {
+      "writable": [],
+      "readonly": []
+    },
+    "computeUnitsConsumed": {
+      "__bigint": "1254"
+    }
+  },
+  "version": "legacy",
+  "blockTime": {
+    "__bigint": "1753957326"
+  },
+  "transactionIndex": {
+    "__bigint": "992"
+  }
+}

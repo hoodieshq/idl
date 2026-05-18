@@ -6,3 +6,9 @@ idls-both/
 *.tsbuildinfo
 .env.local
 .next/
+.claude/settings.local.json
+.codex/config.toml
+scratch.ts
+scratch-debug.ts
+# Older bun versions still emit the binary lockfile alongside bun.lock; ignore it.
+bun.lockb

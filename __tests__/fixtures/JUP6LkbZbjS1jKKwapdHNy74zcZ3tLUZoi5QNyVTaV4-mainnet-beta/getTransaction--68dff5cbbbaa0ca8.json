@@ -1,0 +1,108 @@
+{
+  "slot": {
+    "__bigint": "325787117"
+  },
+  "transaction": {
+    "signatures": [
+      "9gqiW8mXLkBZ3y3jNocvsJMsSR2qj1J7Rmj2jwt1CycQFSUUsm8ZGssSWL3jxZbA8C2KHeTRaWPhxMzJqn34HaP",
+      "4mSjczFmCRCjnUoNAy4SEFKCZuRHexj5cEGn9HZfUQ3teDJ3pbuCCG3HUtzPAxp7eJHdhDZe1G4G6Ja8KhmxuSVS"
+    ],
+    "message": {
+      "header": {
+        "numRequiredSignatures": 2,
+        "numReadonlySignedAccounts": 0,
+        "numReadonlyUnsignedAccounts": 2
+      },
+      "accountKeys": [
+        "9u9iZBWqGsp5hXBxkVZtBTuLSGNAG9gEQLgpuVw39ASg",
+        "6BdXy5i2HX9oVmJy4hwj9iuYcQzupso6dXKDxQcZGrEs",
+        "11111111111111111111111111111111",
+        "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4"
+      ],
+      "recentBlockhash": "5bB4UJB6cuYEiX2DUeM233oiQRzXoRRg69TFfZPfaNDq",
+      "instructions": [
+        {
+          "programIdIndex": 2,
+          "accounts": [
+            0,
+            1
+          ],
+          "data": "11117UnYqu1BSSsfpEZwakUpnvmkZ1DapPc3LwJGsp7mnUfFBLxfspZKyJHQDKWnjvM1cr",
+          "stackHeight": 1
+        },
+        {
+          "programIdIndex": 3,
+          "accounts": [
+            1,
+            0
+          ],
+          "data": "pxNa8qvd4Ae4",
+          "stackHeight": 1
+        }
+      ]
+    }
+  },
+  "meta": {
+    "err": null,
+    "status": {
+      "Ok": null
+    },
+    "fee": {
+      "__bigint": "10000"
+    },
+    "preBalances": [
+      {
+        "__bigint": "16462598817"
+      },
+      {
+        "__bigint": "0"
+      },
+      {
+        "__bigint": "1"
+      },
+      {
+        "__bigint": "1141440"
+      }
+    ],
+    "postBalances": [
+      {
+        "__bigint": "16444263137"
+      },
+      {
+        "__bigint": "18325680"
+      },
+      {
+        "__bigint": "1"
+      },
+      {
+        "__bigint": "1141440"
+      }
+    ],
+    "innerInstructions": [],
+    "logMessages": [
+      "Program 11111111111111111111111111111111 invoke [1]",
+      "Program 11111111111111111111111111111111 success",
+      "Program JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4 invoke [1]",
+      "Program log: Instruction: IdlCreateBuffer",
+      "Program JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4 consumed 563 of 399850 compute units",
+      "Program JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4 success"
+    ],
+    "preTokenBalances": [],
+    "postTokenBalances": [],
+    "rewards": [],
+    "loadedAddresses": {
+      "writable": [],
+      "readonly": []
+    },
+    "computeUnitsConsumed": {
+      "__bigint": "713"
+    }
+  },
+  "version": "legacy",
+  "blockTime": {
+    "__bigint": "1741592527"
+  },
+  "transactionIndex": {
+    "__bigint": "1594"
+  }
+}

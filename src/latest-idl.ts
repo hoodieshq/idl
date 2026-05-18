@@ -1,3 +1,4 @@
+import { findMetadataPda, type Seed } from '@solana-program/program-metadata';
 /**
  * "Latest" view: PMP and Anchor IDLs surfaced side-by-side with their last
  * on-chain write slot and parsed version. This is the single source of truth
@@ -19,7 +20,6 @@
  * {@link fetchCurrentIdlPreferPmp} (or the CLI's bare default mode).
  */
 import type { Address } from '@solana/kit';
-import { findMetadataPda, type Seed } from '@solana-program/program-metadata';
 
 import { findAnchorIdlAddress } from './anchor.js';
 import { fetchCurrentAnchorIdlString, type SolanaRpcClient } from './current-idl.js';
@@ -59,9 +59,7 @@ export type LatestIdls = {
 function extractVersion(content: string): string | null {
     try {
         const parsed = JSON.parse(content) as Record<string, unknown>;
-        const v =
-            parsed['version'] ??
-            (parsed['metadata'] as Record<string, unknown> | undefined)?.['version'];
+        const v = parsed['version'] ?? (parsed['metadata'] as Record<string, unknown> | undefined)?.['version'];
         if (typeof v === 'string') return v;
     } catch {
         /* not JSON */
@@ -71,10 +69,7 @@ function extractVersion(content: string): string | null {
 
 function fmtTime(blockTime: bigint | number | null | undefined): string | null {
     if (blockTime === null || blockTime === undefined) return null;
-    return new Date(Number(blockTime) * 1000)
-        .toISOString()
-        .replace('T', ' ')
-        .slice(0, 19);
+    return new Date(Number(blockTime) * 1000).toISOString().replace('T', ' ').slice(0, 19);
 }
 
 async function getLastWriteSlot(
@@ -83,9 +78,7 @@ async function getLastWriteSlot(
 ): Promise<{ slot: string; time: string | null } | null> {
     try {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const sigs = await (rpc as any)
-            .getSignaturesForAddress(account, { limit: 1 })
-            .send();
+        const sigs = await (rpc as any).getSignaturesForAddress(account, { limit: 1 }).send();
         if (!sigs || sigs.length === 0) return null;
         return { slot: sigs[0].slot.toString(), time: fmtTime(sigs[0].blockTime) };
     } catch {
@@ -99,15 +92,13 @@ function buildVersion(
     lastWrite: { slot: string; time: string | null } | null,
 ): LatestIdlVersion {
     return {
-        type,
-        version: extractVersion(content),
-        slot: lastWrite?.slot ?? null,
-        time: lastWrite?.time ?? null,
-        activeFrom: lastWrite
-            ? { slot: lastWrite.slot, time: lastWrite.time }
-            : null,
+        activeFrom: lastWrite ? { slot: lastWrite.slot, time: lastWrite.time } : null,
         activeTo: 'current',
         content,
+        slot: lastWrite?.slot ?? null,
+        time: lastWrite?.time ?? null,
+        type,
+        version: extractVersion(content),
     };
 }
 
@@ -119,8 +110,8 @@ export async function fetchLatestIdls(
     const seed: Seed = options?.seed ?? 'idl';
 
     const [canonicalPmpPda] = await findMetadataPda({
-        program: programId,
         authority: null,
+        program: programId,
         seed,
     });
     const anchorAddr = await findAnchorIdlAddress(programId);
@@ -138,14 +129,10 @@ export async function fetchLatestIdls(
     ]);
 
     return {
-        programId: programId as string,
-        pmpAddress: pmpMetadataAddress as string,
+        anchor: anchorContent ? [buildVersion('anchor', anchorContent, anchorLastWrite)] : [],
         anchorAddress: anchorAddr as string,
-        pmp: pmpResolved
-            ? [buildVersion('pmp', pmpResolved.content, pmpLastWrite)]
-            : [],
-        anchor: anchorContent
-            ? [buildVersion('anchor', anchorContent, anchorLastWrite)]
-            : [],
+        pmp: pmpResolved ? [buildVersion('pmp', pmpResolved.content, pmpLastWrite)] : [],
+        pmpAddress: pmpMetadataAddress as string,
+        programId: programId as string,
     };
 }
