@@ -1,0 +1,116 @@
+{
+  "slot": {
+    "__bigint": "350374476"
+  },
+  "transaction": {
+    "signatures": [
+      "5p1qyLLUKSJ3aB91rXHmUBx2Ui3eZJAXamgT5ZdrPjzUMs1MX5yhrBTFXM35W7zUjLiLwctoxW2WZAsd2wHi6VWg"
+    ],
+    "message": {
+      "header": {
+        "numRequiredSignatures": 1,
+        "numReadonlySignedAccounts": 0,
+        "numReadonlyUnsignedAccounts": 2
+      },
+      "accountKeys": [
+        "5vJwnLeyjV8uNJSp1zn7VLW8GwiQbcsQbGaVSwRmkE4r",
+        "GYebcf9nFUVLqjB3m5fjhxvH4gSydaTxd9vRyQDm9eff",
+        "ComputeBudget111111111111111111111111111111",
+        "ProgM6JCCvbYkfKqJYHePx4xxSUSqJp7rh8Lyv7nk7S"
+      ],
+      "recentBlockhash": "G3n3j44yozs6jDvseaiZJ3eteKVbFFhNQTaZjSTxcpsB",
+      "instructions": [
+        {
+          "programIdIndex": 2,
+          "accounts": [],
+          "data": "KapLMd",
+          "stackHeight": 1
+        },
+        {
+          "programIdIndex": 2,
+          "accounts": [],
+          "data": "3gJqkocMWaMm",
+          "stackHeight": 1
+        },
+        {
+          "programIdIndex": 3,
+          "accounts": [
+            1,
+            0,
+            3,
+            3
+          ],
+          "data": "3dS5kE71ZJmR8xwC9jQmPSYW7gcig4RQLw1nFxs2mhuxLq",
+          "stackHeight": 1
+        }
+      ],
+      "addressTableLookups": []
+    }
+  },
+  "meta": {
+    "err": null,
+    "status": {
+      "Ok": null
+    },
+    "fee": {
+      "__bigint": "5048"
+    },
+    "preBalances": [
+      {
+        "__bigint": "3579351255"
+      },
+      {
+        "__bigint": "13161360"
+      },
+      {
+        "__bigint": "1"
+      },
+      {
+        "__bigint": "1141440"
+      }
+    ],
+    "postBalances": [
+      {
+        "__bigint": "3579346207"
+      },
+      {
+        "__bigint": "13161360"
+      },
+      {
+        "__bigint": "1"
+      },
+      {
+        "__bigint": "1141440"
+      }
+    ],
+    "innerInstructions": [],
+    "logMessages": [
+      "Program ComputeBudget111111111111111111111111111111 invoke [1]",
+      "Program ComputeBudget111111111111111111111111111111 success",
+      "Program ComputeBudget111111111111111111111111111111 invoke [1]",
+      "Program ComputeBudget111111111111111111111111111111 success",
+      "Program ProgM6JCCvbYkfKqJYHePx4xxSUSqJp7rh8Lyv7nk7S invoke [1]",
+      "Program ProgM6JCCvbYkfKqJYHePx4xxSUSqJp7rh8Lyv7nk7S consumed 171 of 171 compute units",
+      "Program ProgM6JCCvbYkfKqJYHePx4xxSUSqJp7rh8Lyv7nk7S success"
+    ],
+    "preTokenBalances": [],
+    "postTokenBalances": [],
+    "rewards": [],
+    "loadedAddresses": {
+      "writable": [],
+      "readonly": []
+    },
+    "computeUnitsConsumed": {
+      "__bigint": "471"
+    }
+  },
+  "version": {
+    "__bigint": "0"
+  },
+  "blockTime": {
+    "__bigint": "1751358839"
+  },
+  "transactionIndex": {
+    "__bigint": "26"
+  }
+}

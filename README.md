@@ -4,8 +4,8 @@
 
 | Surface | Use case |
 |--------|----------|
-| **npm package** `idl` | Import in Node or ship in your own services: `fetchCurrentIdlPreferPmp`, full history reconstruction, PDA helpers |
-| **CLI** | Same logic from the terminal (`--current`, history, dumps) |
+| **npm package** `@solana/idl` | Import in Node or ship in your own services: `fetchCurrentIdlPreferPmp`, full history reconstruction, PDA helpers |
+| **CLI** | Same logic from the terminal: bare IDL by default, `--latest` for the side-by-side payload with slot/time, `--history` for the full replay |
 | **Web + HTTP API** | Hosted UI and JSON endpoints for current, latest, and history |
 
 Live demo (mainnet): https://idl-explorer.vercel.app/
@@ -26,9 +26,19 @@ npm start -- <program-address> [options]
 
 ## CLI Usage
 
-The CLI is published as the **`idl`** binary and mirrors the library (including `--current` for the same resolution as `GET /api/idl`).
+The CLI is published as the **`idl`** binary and mirrors the library. It has three modes, each backed by the same core function the API route uses:
 
-Run these commands from the **repository root** (the directory that contains `src/cli.ts` and the root `package.json`). If your shell is inside `web/`, use `cd ..` first, or invoke the entrypoint explicitly, for example:
+| Mode | Flag | Output | Backing function | API parity |
+|------|------|--------|------------------|------------|
+| **Bare IDL** *(default)* | *(none)* | Just the IDL body on stdout — pretty JSON if parsable, otherwise the raw string | `fetchCurrentIdlPreferPmp` | the `idl` field of `GET /api/idl` |
+| **Latest side-by-side** | `--latest` | `{programId, pmpAddress, anchorAddress, pmp[], anchor[]}` with version/slot/time/activeFrom for each source | `fetchLatestIdls` | `GET /api/latest` |
+| **Full history** | `--history` | Pretty timeline of every revision (and optional `--output` / `--dump-idls`) | `reconstructPmpHistory` / `reconstructAnchorHistory` | `POST /api/history` |
+
+Live IDL resolution (default and `--latest`) always follows the same order: **canonical PMP → fndn fallback PMP → Anchor**. History replay (`--history`) auto-detects unless you pin `--type`.
+
+> **Parsed vs. raw IDL.** Bare mode emits the IDL **parsed** as pretty JSON — best when you want to *use* the IDL (codegen, jq, inspection). `--latest` and `--history` emit the IDL **as a raw string** inside their wrapper — best when you want to *record* or *compare* it (hashing, diffing, byte-stable storage). `JSON.parse` ↔ `JSON.stringify` is not guaranteed to be a byte-for-byte round trip, so the indexer-flavored modes preserve the on-chain bytes verbatim.
+
+Run from the **repository root** (the directory with `src/cli.ts`). If your shell is inside `web/`, either `cd ..` or invoke the entrypoint explicitly:
 
 ```bash
 npx tsx ../src/cli.ts <program-address> [options]
@@ -45,28 +55,39 @@ npx tsx src/cli.ts <program-address> [options]
 | Flag | Description |
 |------|-------------|
 | `-r, --rpc <url>` | Solana RPC URL (or set `RPC_URL` env var) |
-| `-t, --type <type>` | IDL type: `pmp`, `anchor`, or `both` (auto-detected if omitted) |
 | `-s, --seed <seed>` | Metadata seed, PMP only (default: `idl`) |
 | `-a, --authority <address>` | Authority address for non-canonical PMP metadata |
-| `-o, --output <dir>` | Save full state snapshots to directory |
-| `--dump-idls <dir>` | Write each distinct IDL version as JSON + an `index.json` timeline |
-| `--current` | Print only the **latest** on-chain IDL as JSON (PMP first, then Anchor); same rules as `GET /api/idl`. Cannot be combined with `--type`, `--output`, or `--dump-idls` |
+| `--latest` | Print the `{programId, pmpAddress, anchorAddress, pmp[], anchor[]}` payload with version/slot/time (same shape as `GET /api/latest`) |
+| `--history` | Replay the full IDL version history from on-chain transactions |
+| `-t, --type <type>` | **`--history` only.** IDL type: `pmp`, `anchor`, or `both` (auto-detected if omitted) |
+| `-o, --output <dir>` | **`--history` only.** Save full state snapshots to directory |
+| `--dump-idls <dir>` | **`--history` only.** Write each distinct IDL version as JSON + an `index.json` timeline |
+
+`--latest` and `--history` are mutually exclusive. The `--type` / `--output` / `--dump-idls` flags are rejected outside `--history`.
 
 ### Examples
 
-Auto-detect IDL type and display history:
+Bare IDL (default — just the JSON body, ready to pipe):
 
 ```bash
 npx tsx src/cli.ts BUYuxRfhCMWavaUWxhGtPP3ksKEDZxCD5gzknk3JfAya \
-  --rpc https://api.mainnet-beta.solana.com
+  --rpc https://api.mainnet-beta.solana.com > idl.json
 ```
 
-Fetch only the current IDL (PMP preferred, else Anchor), as JSON on stdout:
+Side-by-side current view with slot + time for each source (same shape as `GET /api/latest`):
 
 ```bash
 npx tsx src/cli.ts BUYuxRfhCMWavaUWxhGtPP3ksKEDZxCD5gzknk3JfAya \
   --rpc https://api.mainnet-beta.solana.com \
-  --current
+  --latest
+```
+
+Auto-detected full history (timeline on stdout):
+
+```bash
+npx tsx src/cli.ts BUYuxRfhCMWavaUWxhGtPP3ksKEDZxCD5gzknk3JfAya \
+  --rpc https://api.mainnet-beta.solana.com \
+  --history
 ```
 
 Dump all distinct Anchor IDL versions to a directory:
@@ -74,8 +95,7 @@ Dump all distinct Anchor IDL versions to a directory:
 ```bash
 npx tsx src/cli.ts BUYuxRfhCMWavaUWxhGtPP3ksKEDZxCD5gzknk3JfAya \
   --rpc https://api.mainnet-beta.solana.com \
-  --type anchor \
-  --dump-idls ./idls
+  --history --type anchor --dump-idls ./idls
 ```
 
 Reconstruct both PMP and Anchor IDL history at once:
@@ -83,11 +103,10 @@ Reconstruct both PMP and Anchor IDL history at once:
 ```bash
 npx tsx src/cli.ts BUYuxRfhCMWavaUWxhGtPP3ksKEDZxCD5gzknk3JfAya \
   --rpc https://api.mainnet-beta.solana.com \
-  --type both \
-  --dump-idls ./idls
+  --history --type both --dump-idls ./idls
 ```
 
-When using `--type both`, paths for **both** `--output` and `--dump-idls` are automatically split into `<dir>/pmp/` and `<dir>/anchor/` (for example `./out/pmp` and `./out/anchor` if you pass `--output ./out`).
+When using `--history --type both`, paths for **both** `--output` and `--dump-idls` are automatically split into `<dir>/pmp/` and `<dir>/anchor/` (for example `./out/pmp` and `./out/anchor` if you pass `--output ./out`).
 
 ### Using an environment variable for RPC
 
@@ -131,6 +150,8 @@ All routes accept a **`cluster`** parameter (`mainnet-beta` (default) or `devnet
 
 **`GET /api/latest?programId=<address>&cluster=<cluster>`** — Returns **both** current sources side by side (when present): derived `pmpAddress`, `anchorAddress`, and two arrays `pmp` and `anchor`, each with at most one entry including decoded version metadata and **full `content` string** for the live IDL. Useful when a program has migrated or you want to compare PMP vs Anchor without choosing a single winner.
 
+> `content` is kept as the **raw on-chain string** (not parsed) on this endpoint and on `POST /api/history` below — same reasoning as the CLI's `--latest` / `--history` modes (byte-stable hashing and diffing for indexers). `GET /api/idl` is the parsed/usable view.
+
 **`POST /api/history`** — Reconstructs **distinct** IDL versions over time. Body: `{ "programId": "<address>", "cluster": "<cluster>" }` (cluster defaults to `mainnet-beta` when omitted).
 
 Response (200):
@@ -149,7 +170,7 @@ Each of `pmp` and `anchor` is an array of objects with `type`, `version`, `slot`
 
 ## Library Usage
 
-Install from npm when published (`npm install idl`), or depend on this repository and build. Exports live under `dist/` after `npm run build`.
+Install from npm when published (`npm install @solana/idl`), or depend on this repository and build. Exports live under `dist/` after `npm run build`.
 
 ```bash
 npm run build
@@ -163,13 +184,18 @@ import {
   findPmpMetadataPda,
   findAnchorIdlAddress,
   fetchCurrentIdlPreferPmp,
-} from 'idl';
+  fetchLatestIdls,
+} from '@solana/idl';
 
 const rpc = createSolanaRpc('https://api.mainnet-beta.solana.com');
 
-// Latest IDL only (PMP first, then Anchor), same as GET /api/idl
+// Lean: just the current IDL (PMP first, then Anchor). Same as GET /api/idl.
 const current = await fetchCurrentIdlPreferPmp(rpc, programAddress);
 if (current) console.log(current.type, current.idl);
+
+// Rich: PMP + Anchor side-by-side with slot/time/version. Same as GET /api/latest.
+const latest = await fetchLatestIdls(rpc, programAddress);
+console.log(latest.pmp[0]?.slot, latest.anchor[0]?.slot);
 
 // Anchor IDL history
 const snapshots = await reconstructAnchorHistory(rpc, programAddress);
@@ -184,3 +210,20 @@ const pmpSnapshots = await reconstructPmpHistory(rpc, pda);
 When you call **history** APIs or `reconstructAnchorHistory` / `reconstructPmpHistory`, the library replays on-chain transactions that touched the program’s IDL metadata account (and related buffer accounts), reconstructing state after each relevant instruction. For **Anchor**, this includes legacy IDL instructions and Anchor 0.30+ style IDL instructions (`Create` / buffer flows, `Write`, `SetBuffer`, `SetAuthority`, `Close`, and the corresponding `idl_*` variants). For **PMP** (SPL Program Metadata), it includes instructions such as `Allocate`, `Write`, `Initialize`, `SetData`, `SetAuthority`, `SetImmutable`, `Trim`, `Close`, and `Extend`. Buffer account payloads are rebuilt by replaying writes to those accounts as well.
 
 **Current** and **latest** paths do not replay history: they read the live chain state (and use the Program Metadata client where appropriate), so they are much cheaper than a full history scan.
+
+## Testing
+
+```bash
+npm test
+```
+
+Tests use [Vitest](https://vitest.dev). Integration tests run against **recorded fixtures** in `tests/fixtures/<program>-<cluster>/` — every RPC response the production code paths need is serialized to disk, so the suite is hermetic and offline.
+
+To refresh or add fixtures (requires `RPC_MAINNET` / `RPC_DEVNET` or `web/.env.local`):
+
+```bash
+npm run record:fixtures -- BUYuxRfhCMWavaUWxhGtPP3ksKEDZxCD5gzknk3JfAya mainnet-beta
+npm run record:fixtures -- TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA  devnet
+```
+
+The recorder reuses any fixture already on disk, so reruns only fetch what's missing.

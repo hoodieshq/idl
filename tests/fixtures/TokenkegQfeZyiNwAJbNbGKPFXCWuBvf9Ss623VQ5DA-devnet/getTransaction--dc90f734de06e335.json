@@ -1,0 +1,118 @@
+{
+  "blockTime": {
+    "__bigint": "1778850936"
+  },
+  "meta": {
+    "computeUnitsConsumed": {
+      "__bigint": "965"
+    },
+    "costUnits": {
+      "__bigint": "2547"
+    },
+    "err": null,
+    "fee": {
+      "__bigint": "5097"
+    },
+    "innerInstructions": [],
+    "loadedAddresses": {
+      "readonly": [],
+      "writable": []
+    },
+    "logMessages": [
+      "Program ComputeBudget111111111111111111111111111111 invoke [1]",
+      "Program ComputeBudget111111111111111111111111111111 success",
+      "Program ComputeBudget111111111111111111111111111111 invoke [1]",
+      "Program ComputeBudget111111111111111111111111111111 success",
+      "Program ProgM6JCCvbYkfKqJYHePx4xxSUSqJp7rh8Lyv7nk7S invoke [1]",
+      "Program ProgM6JCCvbYkfKqJYHePx4xxSUSqJp7rh8Lyv7nk7S consumed 665 of 665 compute units",
+      "Program ProgM6JCCvbYkfKqJYHePx4xxSUSqJp7rh8Lyv7nk7S success"
+    ],
+    "postBalances": [
+      {
+        "__bigint": "5396139515"
+      },
+      {
+        "__bigint": "51865920"
+      },
+      {
+        "__bigint": "1"
+      },
+      {
+        "__bigint": "1141440"
+      }
+    ],
+    "postTokenBalances": [],
+    "preBalances": [
+      {
+        "__bigint": "5396144612"
+      },
+      {
+        "__bigint": "51865920"
+      },
+      {
+        "__bigint": "1"
+      },
+      {
+        "__bigint": "1141440"
+      }
+    ],
+    "preTokenBalances": [],
+    "rewards": [],
+    "status": {
+      "Ok": null
+    }
+  },
+  "slot": {
+    "__bigint": "462539699"
+  },
+  "transaction": {
+    "message": {
+      "accountKeys": [
+        "fndnu15PLXELbLsTqrfbiweBvsBj2o12RoVfkeCCbX2",
+        "GeEfz6aUQt1BWHnENHhC8FKJGNJ2YuUC79x92q83FLwZ",
+        "ComputeBudget111111111111111111111111111111",
+        "ProgM6JCCvbYkfKqJYHePx4xxSUSqJp7rh8Lyv7nk7S"
+      ],
+      "addressTableLookups": [],
+      "header": {
+        "numReadonlySignedAccounts": 0,
+        "numReadonlyUnsignedAccounts": 2,
+        "numRequiredSignatures": 1
+      },
+      "instructions": [
+        {
+          "accounts": [],
+          "data": "K89EFH",
+          "programIdIndex": 2,
+          "stackHeight": 1
+        },
+        {
+          "accounts": [],
+          "data": "3gJqkocMWaMm",
+          "programIdIndex": 2,
+          "stackHeight": 1
+        },
+        {
+          "accounts": [
+            1,
+            0,
+            3
+          ],
+          "data": "142isz1EQzKrUZKjNgkTfhtfBZUjMonAbnG6kSEkzg3w3DUiNePmcrM8Byo1nrq6WXMMTLSfUNgFcyj51MQeA2ZvACyNqiwcXzyowm8C27WWfeDHKiwY9xwGLtc9TNwFB9PMzSKfCdsSmqzViZk3mnKvakri1CUabPBXPZBygUiwjHbU6TKsmuPSavWAuR7TqQejVyRfx9phMEFN4rr5wxu5PxTQDwPt5aVQZi1HnUc2qMbJ2EMAg5S7hsAfs8zd245oj7K3ZPjgwsmxbSnonp73BJSXJxomRMtgnt1nyvbXV7DnS4bBGGB23wXgjE5BaT1YiQc2Km7R5njUAB5DUZ34JHrp38o2TYwQqHidNQgMYdsvFZJK3zKfXozHHTduGx3a3AM9umfBYqNkyq5Mvuoom44a3nwULMPuQh4TL1Tj2MxGvx3FKN9tDLMC5rFCuKYFjZpsW4uVVaGWMdMVryUtVvvtLgSnWuPtPjADKrt5pgpJ8T5eT6P3wfPGLz9yWtb9uRRnbP3izdon6WhTuzG1kB62dwxV1HoVNgPP2UiYgNY49KLo1aiNzShWuYY45UhcND8bPwGLf7JizE6GKTyjZSKK1dgosXyJPd6PpVr8HDKJkci9W6qoMaUWi8NFmGewpu4mAL8QTg3rreRoMfdqwamT5A9on8mZ4pa8MZ6Hp8FeLqsdEALkRb8QafyTswSFq8J8eiKXUTs2pj3v1sq8WgejEHKbRWX2Th1woWGjtn3dsrrdE2ihkBFoywG8QryW1dE1Ftk4PTsV4Hfjyb7zgPf3hrWsuTY99R8EKBj3oFPFnmSaNpozEEDtfsiGhzHfEpxLkKBd1F8k91WkNhP421sdwLkq5GT7GiNZGLLnFStSpBGZQ8eibho9tAQEn8vU5pa7VibAGE2Pt6UDXFYgareKLFq4Ui8nAZm3GZMetFLRqkJGFmaMH2MJpiV31u7Hu5rZgBpJmfrpJXoZbS5MhHYHLyFiRQJggtmSpX4ho6K5GA4rh7213G1aDqcDMtMHB2eqp2QyP3a2GfAPV8iYD9FxvPPDrTBUhd5jHcAG2rgymTZ4NtXG1zb6dzCSdGcAKyJMvpvogjDuMDSZ51AtTskHVK2MqR5sRJHLadocBCS4T6B52DbUuinysGHyx788oUaRrojNkwa7yPSxHvpKSvuyyyXuZ8FYfj6N68UveRNUK4r68P9yFfvjtnd9YrGxfdEbGesTQYADz6Yi9EFGWRcRzq24cmt7Nh5169gSEBQeDDTcXUnd5X3CoVDtd8M4J2zdwDutjjVAC25Nz9kCJSH2EoG4PS57GSUsaLpgFmVxb",
+          "programIdIndex": 3,
+          "stackHeight": 1
+        }
+      ],
+      "recentBlockhash": "H8VMtDruopyJZidtjDTYg1uK6eDWQAbU2GMSdy5Jvh5z"
+    },
+    "signatures": [
+      "4wEiYojzDHgpvHZkGJiVQDoPq5uZvunAoXWm63ikPvKM2nQE9JUezWjtdbL9yrA1rCdEzSTwfJMsXFBmMoNfZBtH"
+    ]
+  },
+  "transactionIndex": {
+    "__bigint": "5"
+  },
+  "version": {
+    "__bigint": "0"
+  }
+}

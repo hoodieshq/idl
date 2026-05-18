@@ -22,6 +22,9 @@ export type { Snapshot } from './rpc.js';
 export { fetchCurrentIdlPreferPmp, fetchCurrentAnchorIdlString } from './current-idl.js';
 export type { CurrentIdlResponse, CurrentIdlSource, SolanaRpcClient } from './current-idl.js';
 
+export { fetchLatestIdls } from './latest-idl.js';
+export type { LatestIdls, LatestIdlVersion, IdlSource } from './latest-idl.js';
+
 export {
     IDL_FALLBACK_PMP_AUTHORITY,
     buildPmpIdlLookups,
