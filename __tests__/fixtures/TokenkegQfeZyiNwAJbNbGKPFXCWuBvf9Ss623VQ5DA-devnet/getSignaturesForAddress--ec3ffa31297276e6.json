@@ -1,0 +1,17 @@
+[
+  {
+    "blockTime": {
+      "__bigint": "1778850938"
+    },
+    "confirmationStatus": "finalized",
+    "err": null,
+    "memo": null,
+    "signature": "2sFJd6EstcL4W8wztcNTZHsipoP69bWAgaDwxdzkEWLF5RXmLrXxnTfQ2KD1vHvCpuG2Davn99LAdx9zw3BtiCr7",
+    "slot": {
+      "__bigint": "462539703"
+    },
+    "transactionIndex": {
+      "__bigint": "14"
+    }
+  }
+]

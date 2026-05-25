@@ -1,0 +1,92 @@
+{
+  "slot": {
+    "__bigint": "367885537"
+  },
+  "transaction": {
+    "signatures": [
+      "5jDCVLayAbbhXQNgYHyLMKgVre5Mbs16RakmDjbSyRGLQtdCgh1Dh29ZnDywCA2LtC49qS9eorZGUV7tcjJj4Ku7"
+    ],
+    "message": {
+      "header": {
+        "numRequiredSignatures": 1,
+        "numReadonlySignedAccounts": 0,
+        "numReadonlyUnsignedAccounts": 1
+      },
+      "accountKeys": [
+        "9u9iZBWqGsp5hXBxkVZtBTuLSGNAG9gEQLgpuVw39ASg",
+        "6oVG2wtr6ddQVW2ox4uw5tcfAMDFT4KvJYfnRPQsEeXB",
+        "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4"
+      ],
+      "recentBlockhash": "6yy82ucNMgzin9RtniUcXQz99JwqzdUjtFVbLcQrtRJV",
+      "instructions": [
+        {
+          "programIdIndex": 2,
+          "accounts": [
+            1,
+            0
+          ],
+          "data": "34aaiULVVgDJXm8JgtrsBPCvsPNeevhDKzAWQqLEWWLxvTZdSJ2revFHqq1vke6VgwVq5WcpgxZnF3pyVrPejGMuRyawMcFRP1rh3mbxxA2GxTXi8i1xEzTfZfs6CHSQBdPDbH3MoTFDkm5p7bEFyJvBrQwrtPP9DmyrGpyLNZ1QNToEGUa95wx8QK99jmrY5CYF7vnSStxKqWGtBJoD2HeY8c5ZB4ZquH91t1pHUf3tcfQLvLwUXyUmkM9w3MX5Tz7GBZqooGTWxUSWLRNtYxe8KeePjG6UPdxXpZV9j4CU3paBdrWaKx1NoMCG8SpDsi9DrQ5hc9rFhTFFmJPVKdFvNdQTiHtCqMiY6TFhWY4XFj7SCmqey87Sah72U58ycWqgoMjEHNMmHuX4waJJZqxzLmgcD1aoBNyhyQGUFFu9qSBHdSgzJ5nwWFvpA2BWY2HwKagaJXUEQC5httNt4WtDF74vQcdzeKn4scw2K1o5MAMZ4CVxkQSbfTM2aLudyRY4KWt2HPN1TnxtjuTQYKkNTJkMZPo6sJAgMQzU55JrtwuquQFHUKH2xuwANdsy6Riqqrpx2aCWPGjGwrHus9CG9kCSEUECwsk7DYDCintoZhraqYXVxdeCy9J79VjbNdMAiHgKxn7dZjXi",
+          "stackHeight": 1
+        }
+      ]
+    }
+  },
+  "meta": {
+    "err": null,
+    "status": {
+      "Ok": null
+    },
+    "fee": {
+      "__bigint": "5000"
+    },
+    "preBalances": [
+      {
+        "__bigint": "17624570111"
+      },
+      {
+        "__bigint": "25327440"
+      },
+      {
+        "__bigint": "2729681025"
+      }
+    ],
+    "postBalances": [
+      {
+        "__bigint": "17624565111"
+      },
+      {
+        "__bigint": "25327440"
+      },
+      {
+        "__bigint": "2729681025"
+      }
+    ],
+    "innerInstructions": [],
+    "logMessages": [
+      "Program JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4 invoke [1]",
+      "Program log: Instruction: IdlWrite",
+      "Program JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4 consumed 992 of 200000 compute units",
+      "Program JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4 success"
+    ],
+    "preTokenBalances": [],
+    "postTokenBalances": [],
+    "rewards": [],
+    "loadedAddresses": {
+      "writable": [],
+      "readonly": []
+    },
+    "computeUnitsConsumed": {
+      "__bigint": "992"
+    },
+    "costUnits": {
+      "__bigint": "2440"
+    }
+  },
+  "version": "legacy",
+  "blockTime": {
+    "__bigint": "1758295317"
+  },
+  "transactionIndex": {
+    "__bigint": "1276"
+  }
+}

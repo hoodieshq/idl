@@ -1,0 +1,90 @@
+{
+  "slot": {
+    "__bigint": "327165216"
+  },
+  "transaction": {
+    "signatures": [
+      "3uJDYYfgwjbk2L688qR1ip5HZn8Je6s1Bv65ePBEgQnukVCa3U9kFc2v6vBW6MG6u8JUVg7gD4jFaLiF52KvaPE7"
+    ],
+    "message": {
+      "header": {
+        "numRequiredSignatures": 1,
+        "numReadonlySignedAccounts": 0,
+        "numReadonlyUnsignedAccounts": 1
+      },
+      "accountKeys": [
+        "9u9iZBWqGsp5hXBxkVZtBTuLSGNAG9gEQLgpuVw39ASg",
+        "CaGP3yBds6Wm5ETDWqSmE12JiidA1eqzkwchSJE5y8mA",
+        "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4"
+      ],
+      "recentBlockhash": "Cy7vMgy9WCVpZsy2eqxHS43apoG5TYPWfdjEHeGNjCdz",
+      "instructions": [
+        {
+          "programIdIndex": 2,
+          "accounts": [
+            1,
+            0,
+            0
+          ],
+          "data": "pxNa8qvd4Ae8",
+          "stackHeight": 1
+        }
+      ]
+    }
+  },
+  "meta": {
+    "err": null,
+    "status": {
+      "Ok": null
+    },
+    "fee": {
+      "__bigint": "5000"
+    },
+    "preBalances": [
+      {
+        "__bigint": "8310142747"
+      },
+      {
+        "__bigint": "22397280"
+      },
+      {
+        "__bigint": "1141440"
+      }
+    ],
+    "postBalances": [
+      {
+        "__bigint": "8332535027"
+      },
+      {
+        "__bigint": "0"
+      },
+      {
+        "__bigint": "1141440"
+      }
+    ],
+    "innerInstructions": [],
+    "logMessages": [
+      "Program JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4 invoke [1]",
+      "Program log: Instruction: IdlCloseAccount",
+      "Program JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4 consumed 940 of 200000 compute units",
+      "Program JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4 success"
+    ],
+    "preTokenBalances": [],
+    "postTokenBalances": [],
+    "rewards": [],
+    "loadedAddresses": {
+      "writable": [],
+      "readonly": []
+    },
+    "computeUnitsConsumed": {
+      "__bigint": "940"
+    }
+  },
+  "version": "legacy",
+  "blockTime": {
+    "__bigint": "1742139916"
+  },
+  "transactionIndex": {
+    "__bigint": "1801"
+  }
+}

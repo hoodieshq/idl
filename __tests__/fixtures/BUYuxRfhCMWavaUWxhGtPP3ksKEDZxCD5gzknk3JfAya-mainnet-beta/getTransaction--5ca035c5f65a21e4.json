@@ -1,0 +1,104 @@
+{
+  "slot": {
+    "__bigint": "340721699"
+  },
+  "transaction": {
+    "signatures": [
+      "5EkKg6FtjrG79dmRJdv9FVYH7JGiM9isvdN9vFnb1dmBiYKmZh12VNFcxsKD5xVHatRS2sfoRPUVszpQAmgidsum"
+    ],
+    "message": {
+      "header": {
+        "numRequiredSignatures": 1,
+        "numReadonlySignedAccounts": 0,
+        "numReadonlyUnsignedAccounts": 2
+      },
+      "accountKeys": [
+        "5vJwnLeyjV8uNJSp1zn7VLW8GwiQbcsQbGaVSwRmkE4r",
+        "2n8fFycG7T8paPyb1UieawFu2SKMF6JowjfkyaHUvbFR",
+        "ComputeBudget111111111111111111111111111111",
+        "BUYuxRfhCMWavaUWxhGtPP3ksKEDZxCD5gzknk3JfAya"
+      ],
+      "recentBlockhash": "jYEbYPwXvd39TZjLMEemAVgnu1Q5JLxq4gShyf22eUf",
+      "instructions": [
+        {
+          "programIdIndex": 2,
+          "accounts": [],
+          "data": "3gJqkocMWaMm",
+          "stackHeight": 1
+        },
+        {
+          "programIdIndex": 3,
+          "accounts": [
+            1,
+            0
+          ],
+          "data": "Fz27vhb78XVw3WbaEV88rRZiSKDugePYTn87UuxgN46S8R4WEfTksG2BP7VBNWJK9WoGqXdbPkSUyejpiUo2APxvo1X3v1j89XPzDbWZ4qRcacnexYycnyBS3VqH9HPqnFdnBi277UJcZwhzjEp5c5G6b3hoLuV5BbhJA9eZqfZ95ZzRCiZmTt27ZWszT1hcCytrWbcdY2TX7fuBYN1Rboc1nqCmesjEAp2LWcDXsX6HoSD8tBZs1UbrGgTRMfw1kLpuSw2hfChyFVU8rjoRDM6g24Vtb65hdDBxuZhNCpYESArJZZZ5kr",
+          "stackHeight": 1
+        }
+      ]
+    }
+  },
+  "meta": {
+    "err": null,
+    "status": {
+      "Ok": null
+    },
+    "fee": {
+      "__bigint": "25300"
+    },
+    "preBalances": [
+      {
+        "__bigint": "1372620738"
+      },
+      {
+        "__bigint": "11038560"
+      },
+      {
+        "__bigint": "1"
+      },
+      {
+        "__bigint": "1141440"
+      }
+    ],
+    "postBalances": [
+      {
+        "__bigint": "1372595438"
+      },
+      {
+        "__bigint": "11038560"
+      },
+      {
+        "__bigint": "1"
+      },
+      {
+        "__bigint": "1141440"
+      }
+    ],
+    "innerInstructions": [],
+    "logMessages": [
+      "Program ComputeBudget111111111111111111111111111111 invoke [1]",
+      "Program ComputeBudget111111111111111111111111111111 success",
+      "Program BUYuxRfhCMWavaUWxhGtPP3ksKEDZxCD5gzknk3JfAya invoke [1]",
+      "Program log: Instruction: IdlWrite",
+      "Program BUYuxRfhCMWavaUWxhGtPP3ksKEDZxCD5gzknk3JfAya consumed 1338 of 202850 compute units",
+      "Program BUYuxRfhCMWavaUWxhGtPP3ksKEDZxCD5gzknk3JfAya success"
+    ],
+    "preTokenBalances": [],
+    "postTokenBalances": [],
+    "rewards": [],
+    "loadedAddresses": {
+      "writable": [],
+      "readonly": []
+    },
+    "computeUnitsConsumed": {
+      "__bigint": "1488"
+    }
+  },
+  "version": "legacy",
+  "blockTime": {
+    "__bigint": "1747527204"
+  },
+  "transactionIndex": {
+    "__bigint": "8"
+  }
+}

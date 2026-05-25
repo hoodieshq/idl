@@ -1,0 +1,104 @@
+{
+  "slot": {
+    "__bigint": "340692160"
+  },
+  "transaction": {
+    "signatures": [
+      "ZcaAtt38PvdpB1by5ihp1vJDYBdwUgXxUoUNnXvyYbP5UYtV3N4ooUV31MYRdzUHbBXCkuGBjYsbXPbyHRZy2AV"
+    ],
+    "message": {
+      "header": {
+        "numRequiredSignatures": 1,
+        "numReadonlySignedAccounts": 0,
+        "numReadonlyUnsignedAccounts": 2
+      },
+      "accountKeys": [
+        "5vJwnLeyjV8uNJSp1zn7VLW8GwiQbcsQbGaVSwRmkE4r",
+        "E6Dbk7ifP7wjmXPpLmjM5GQuk9cBieYYdDjNc9sfvS3S",
+        "ComputeBudget111111111111111111111111111111",
+        "BUYuxRfhCMWavaUWxhGtPP3ksKEDZxCD5gzknk3JfAya"
+      ],
+      "recentBlockhash": "Cahxc6G9uczifG53RQkfU77BjAcamhxAzwmnR4b4BY14",
+      "instructions": [
+        {
+          "programIdIndex": 2,
+          "accounts": [],
+          "data": "3gJqkocMWaMm",
+          "stackHeight": 1
+        },
+        {
+          "programIdIndex": 3,
+          "accounts": [
+            1,
+            0
+          ],
+          "data": "FFEvWGkYAPEY9Ymfd9EUUhw8s5UqNhxkCgAPV4vhAf1rAQGQfJNj8XkW",
+          "stackHeight": 1
+        }
+      ]
+    }
+  },
+  "meta": {
+    "err": null,
+    "status": {
+      "Ok": null
+    },
+    "fee": {
+      "__bigint": "25300"
+    },
+    "preBalances": [
+      {
+        "__bigint": "1637457883"
+      },
+      {
+        "__bigint": "10481760"
+      },
+      {
+        "__bigint": "1"
+      },
+      {
+        "__bigint": "1141440"
+      }
+    ],
+    "postBalances": [
+      {
+        "__bigint": "1637432583"
+      },
+      {
+        "__bigint": "10481760"
+      },
+      {
+        "__bigint": "1"
+      },
+      {
+        "__bigint": "1141440"
+      }
+    ],
+    "innerInstructions": [],
+    "logMessages": [
+      "Program ComputeBudget111111111111111111111111111111 invoke [1]",
+      "Program ComputeBudget111111111111111111111111111111 success",
+      "Program BUYuxRfhCMWavaUWxhGtPP3ksKEDZxCD5gzknk3JfAya invoke [1]",
+      "Program log: Instruction: IdlSetAuthority",
+      "Program BUYuxRfhCMWavaUWxhGtPP3ksKEDZxCD5gzknk3JfAya consumed 1145 of 202850 compute units",
+      "Program BUYuxRfhCMWavaUWxhGtPP3ksKEDZxCD5gzknk3JfAya success"
+    ],
+    "preTokenBalances": [],
+    "postTokenBalances": [],
+    "rewards": [],
+    "loadedAddresses": {
+      "writable": [],
+      "readonly": []
+    },
+    "computeUnitsConsumed": {
+      "__bigint": "1295"
+    }
+  },
+  "version": "legacy",
+  "blockTime": {
+    "__bigint": "1747515530"
+  },
+  "transactionIndex": {
+    "__bigint": "2483"
+  }
+}

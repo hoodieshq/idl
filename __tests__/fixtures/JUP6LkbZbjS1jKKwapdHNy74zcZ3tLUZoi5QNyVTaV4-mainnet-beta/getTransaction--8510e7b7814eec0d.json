@@ -1,0 +1,97 @@
+{
+  "slot": {
+    "__bigint": "331166760"
+  },
+  "transaction": {
+    "signatures": [
+      "2XiXaU7TjrnB6FmqrEHC5RzBhY63rEQBanjPvEB1Xh4YtArcnPGfQhGgKNiLiwyFXiQXKNBLpRULvi7hhWoGWKPD"
+    ],
+    "message": {
+      "header": {
+        "numRequiredSignatures": 1,
+        "numReadonlySignedAccounts": 0,
+        "numReadonlyUnsignedAccounts": 1
+      },
+      "accountKeys": [
+        "9u9iZBWqGsp5hXBxkVZtBTuLSGNAG9gEQLgpuVw39ASg",
+        "8QY9buXqVh5jWAgWALvXVaX8NBAbUCWRpqVb5ZzaAbqr",
+        "C88XWfp26heEmDkmfSzeXP7Fd7GQJ2j9dDTUsyiZbUTa",
+        "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4"
+      ],
+      "recentBlockhash": "GHQ28hFmdrqCk3MaKBw6ULa8APauGqSvd7KJL32rtPEs",
+      "instructions": [
+        {
+          "programIdIndex": 3,
+          "accounts": [
+            1,
+            2,
+            0
+          ],
+          "data": "pxNa8qvd4Ae6",
+          "stackHeight": 1
+        }
+      ]
+    }
+  },
+  "meta": {
+    "err": null,
+    "status": {
+      "Ok": null
+    },
+    "fee": {
+      "__bigint": "5000"
+    },
+    "preBalances": [
+      {
+        "__bigint": "8136672118"
+      },
+      {
+        "__bigint": "22501680"
+      },
+      {
+        "__bigint": "44836320"
+      },
+      {
+        "__bigint": "1141440"
+      }
+    ],
+    "postBalances": [
+      {
+        "__bigint": "8136667118"
+      },
+      {
+        "__bigint": "22501680"
+      },
+      {
+        "__bigint": "44836320"
+      },
+      {
+        "__bigint": "1141440"
+      }
+    ],
+    "innerInstructions": [],
+    "logMessages": [
+      "Program JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4 invoke [1]",
+      "Program log: Instruction: IdlSetBuffer",
+      "Program JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4 consumed 1532 of 200000 compute units",
+      "Program JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4 success"
+    ],
+    "preTokenBalances": [],
+    "postTokenBalances": [],
+    "rewards": [],
+    "loadedAddresses": {
+      "writable": [],
+      "readonly": []
+    },
+    "computeUnitsConsumed": {
+      "__bigint": "1532"
+    }
+  },
+  "version": "legacy",
+  "blockTime": {
+    "__bigint": "1743740452"
+  },
+  "transactionIndex": {
+    "__bigint": "81"
+  }
+}

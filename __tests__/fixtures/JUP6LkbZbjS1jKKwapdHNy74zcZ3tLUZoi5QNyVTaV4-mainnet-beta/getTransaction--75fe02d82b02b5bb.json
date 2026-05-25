@@ -1,0 +1,97 @@
+{
+  "slot": {
+    "__bigint": "308275516"
+  },
+  "transaction": {
+    "signatures": [
+      "4Hjp4bB9awEmenXv2sTGgCgv3B6TvAmW5uWdtvi4N7VpvFQqhRR7sy3zX7dcfQHAMKrTendmASEGrBYK4z2gmMj1"
+    ],
+    "message": {
+      "header": {
+        "numRequiredSignatures": 1,
+        "numReadonlySignedAccounts": 0,
+        "numReadonlyUnsignedAccounts": 1
+      },
+      "accountKeys": [
+        "9u9iZBWqGsp5hXBxkVZtBTuLSGNAG9gEQLgpuVw39ASg",
+        "C88XWfp26heEmDkmfSzeXP7Fd7GQJ2j9dDTUsyiZbUTa",
+        "J4F8o6ymzd5XKFjJBv1QZkLtUCswPYvGBDQwG8ys7FVU",
+        "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4"
+      ],
+      "recentBlockhash": "FACy4QN3eBaxL7VGeBx74Rk9hSRUNSvCPn6qN2suHRrh",
+      "instructions": [
+        {
+          "programIdIndex": 3,
+          "accounts": [
+            2,
+            1,
+            0
+          ],
+          "data": "pxNa8qvd4Ae6",
+          "stackHeight": 1
+        }
+      ]
+    }
+  },
+  "meta": {
+    "err": null,
+    "status": {
+      "Ok": null
+    },
+    "fee": {
+      "__bigint": "5000"
+    },
+    "preBalances": [
+      {
+        "__bigint": "13002983505"
+      },
+      {
+        "__bigint": "44836320"
+      },
+      {
+        "__bigint": "21200160"
+      },
+      {
+        "__bigint": "1141440"
+      }
+    ],
+    "postBalances": [
+      {
+        "__bigint": "13002978505"
+      },
+      {
+        "__bigint": "44836320"
+      },
+      {
+        "__bigint": "21200160"
+      },
+      {
+        "__bigint": "1141440"
+      }
+    ],
+    "innerInstructions": [],
+    "logMessages": [
+      "Program JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4 invoke [1]",
+      "Program log: Instruction: IdlSetBuffer",
+      "Program JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4 consumed 3041 of 200000 compute units",
+      "Program JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4 success"
+    ],
+    "preTokenBalances": [],
+    "postTokenBalances": [],
+    "rewards": [],
+    "loadedAddresses": {
+      "writable": [],
+      "readonly": []
+    },
+    "computeUnitsConsumed": {
+      "__bigint": "3041"
+    }
+  },
+  "version": "legacy",
+  "blockTime": {
+    "__bigint": "1734533016"
+  },
+  "transactionIndex": {
+    "__bigint": "1648"
+  }
+}

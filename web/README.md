@@ -17,24 +17,44 @@ npm install
 npx tsx src/cli.ts <program-address> [options]
 ```
 
+Three modes, mirroring the HTTP API one-to-one:
+
+| Mode | Flag | Output | API parity |
+|------|------|--------|------------|
+| **Bare IDL** *(default)* | *(none)* | Just the IDL body — pretty JSON if parsable, otherwise the raw string | the `idl` field of `GET /api/idl` |
+| **Latest side-by-side** | `--latest` | `{programId, pmpAddress, anchorAddress, pmp[], anchor[]}` with version/slot/time | `GET /api/latest` |
+| **Full history** | `--history` | Pretty timeline of every revision | `POST /api/history` |
+
+Live resolution (default and `--latest`) always follows **canonical PMP → fndn fallback PMP → Anchor**.
+
 ### Options
 
 | Flag | Description |
 |------|-------------|
 | `-r, --rpc <url>` | Solana RPC URL (or set `RPC_URL` env var) |
-| `-t, --type <type>` | IDL type: `pmp`, `anchor`, or `both` (auto-detected if omitted) |
 | `-s, --seed <seed>` | Metadata seed, PMP only (default: `idl`) |
 | `-a, --authority <address>` | Authority address for non-canonical PMP metadata |
-| `-o, --output <dir>` | Save full state snapshots to directory |
-| `--dump-idls <dir>` | Write each distinct IDL version as JSON + an `index.json` timeline |
+| `--latest` | Print the `{programId, pmpAddress, anchorAddress, pmp[], anchor[]}` payload |
+| `--history` | Replay the full IDL version history from on-chain transactions |
+| `-t, --type <type>` | **`--history` only.** IDL type: `pmp`, `anchor`, or `both` |
+| `-o, --output <dir>` | **`--history` only.** Save full state snapshots to directory |
+| `--dump-idls <dir>` | **`--history` only.** Write each distinct IDL version as JSON + an `index.json` timeline |
 
 ### Examples
 
-Auto-detect IDL type and display history:
+Bare IDL (default — pipe straight into a file):
 
 ```bash
 npx tsx src/cli.ts BUYuxRfhCMWavaUWxhGtPP3ksKEDZxCD5gzknk3JfAya \
-  --rpc https://api.mainnet-beta.solana.com
+  --rpc https://api.mainnet-beta.solana.com > idl.json
+```
+
+Auto-detected full history:
+
+```bash
+npx tsx src/cli.ts BUYuxRfhCMWavaUWxhGtPP3ksKEDZxCD5gzknk3JfAya \
+  --rpc https://api.mainnet-beta.solana.com \
+  --history
 ```
 
 Dump all distinct Anchor IDL versions to a directory:
@@ -42,8 +62,7 @@ Dump all distinct Anchor IDL versions to a directory:
 ```bash
 npx tsx src/cli.ts BUYuxRfhCMWavaUWxhGtPP3ksKEDZxCD5gzknk3JfAya \
   --rpc https://api.mainnet-beta.solana.com \
-  --type anchor \
-  --dump-idls ./idls
+  --history --type anchor --dump-idls ./idls
 ```
 
 Reconstruct both PMP and Anchor IDL history at once:
@@ -51,17 +70,16 @@ Reconstruct both PMP and Anchor IDL history at once:
 ```bash
 npx tsx src/cli.ts BUYuxRfhCMWavaUWxhGtPP3ksKEDZxCD5gzknk3JfAya \
   --rpc https://api.mainnet-beta.solana.com \
-  --type both \
-  --dump-idls ./idls
+  --history --type both --dump-idls ./idls
 ```
 
-When using `--type both`, output is automatically namespaced into `<dir>/pmp/` and `<dir>/anchor/`.
+When using `--history --type both`, output is automatically namespaced into `<dir>/pmp/` and `<dir>/anchor/`.
 
 ### Using an environment variable for RPC
 
 ```bash
 export RPC_URL=https://api.mainnet-beta.solana.com
-npx tsx src/cli.ts <program-address> --dump-idls ./idls
+npx tsx src/cli.ts <program-address> --history --dump-idls ./idls
 ```
 
 ## Web App
@@ -81,7 +99,7 @@ Deploy to Vercel by setting the root directory to `web` and adding `RPC_MAINNET`
 
 All endpoints accept a `cluster` parameter (`mainnet-beta` (default) or `devnet`) — query string on `GET`, JSON body on `POST`. A request to a cluster whose RPC env var is unset returns `500` with the missing var name.
 
-**`GET /api/idl?programId=<address>&cluster=<cluster>`** -- Returns the current IDL for a program. Checks PMP first (canonical, then the `IDL_FALLBACK_PMP_AUTHORITY` non-canonical authority), falls back to Anchor.
+**`GET /api/idl?programId=<address>&cluster=<cluster>`** -- Returns the current IDL for a program. Checks PMP first (canonical, then every `IDL_FALLBACK_PMP_AUTHORITIES` non-canonical authority), falls back to Anchor.
 
 ```json
 {
@@ -104,18 +122,16 @@ import { createSolanaRpc } from '@solana/kit';
 import {
   reconstructPmpHistory,
   reconstructAnchorHistory,
-  findPmpMetadataPda,
   findAnchorIdlAddress,
-} from 'idl';
+} from '@solana/idl';
 
 const rpc = createSolanaRpc('https://api.mainnet-beta.solana.com');
 
 // Anchor IDL history
 const snapshots = await reconstructAnchorHistory(rpc, programAddress);
 
-// PMP IDL history
-const pda = await findPmpMetadataPda(programAddress, 'idl');
-const pmpSnapshots = await reconstructPmpHistory(rpc, pda);
+// PMP IDL history (defaults to canonical authority + seed 'idl')
+const pmpSnapshots = await reconstructPmpHistory(rpc, programAddress);
 ```
 
 ## How It Works

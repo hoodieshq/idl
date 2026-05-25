@@ -1,0 +1,14 @@
+[
+  {
+    "signature": "4XjjGv7sB8TC128NcNYM4M8NW8xF4GBeAo4qn1y3ifZdEDKQ2uMJHTSgMZednX5KxNAr5wVULxgmfY1f45bq6rtE",
+    "slot": {
+      "__bigint": "418348398"
+    },
+    "err": null,
+    "memo": null,
+    "blockTime": {
+      "__bigint": "1778223864"
+    },
+    "confirmationStatus": "finalized"
+  }
+]

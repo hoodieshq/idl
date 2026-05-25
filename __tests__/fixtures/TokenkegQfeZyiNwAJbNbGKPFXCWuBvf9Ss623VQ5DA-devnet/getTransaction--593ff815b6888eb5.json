@@ -1,0 +1,118 @@
+{
+  "blockTime": {
+    "__bigint": "1778849032"
+  },
+  "meta": {
+    "computeUnitsConsumed": {
+      "__bigint": "966"
+    },
+    "costUnits": {
+      "__bigint": "2470"
+    },
+    "err": null,
+    "fee": {
+      "__bigint": "5097"
+    },
+    "innerInstructions": [],
+    "loadedAddresses": {
+      "readonly": [],
+      "writable": []
+    },
+    "logMessages": [
+      "Program ComputeBudget111111111111111111111111111111 invoke [1]",
+      "Program ComputeBudget111111111111111111111111111111 success",
+      "Program ComputeBudget111111111111111111111111111111 invoke [1]",
+      "Program ComputeBudget111111111111111111111111111111 success",
+      "Program ProgM6JCCvbYkfKqJYHePx4xxSUSqJp7rh8Lyv7nk7S invoke [1]",
+      "Program ProgM6JCCvbYkfKqJYHePx4xxSUSqJp7rh8Lyv7nk7S consumed 666 of 666 compute units",
+      "Program ProgM6JCCvbYkfKqJYHePx4xxSUSqJp7rh8Lyv7nk7S success"
+    ],
+    "postBalances": [
+      {
+        "__bigint": "5396175186"
+      },
+      {
+        "__bigint": "51865920"
+      },
+      {
+        "__bigint": "1"
+      },
+      {
+        "__bigint": "1141440"
+      }
+    ],
+    "postTokenBalances": [],
+    "preBalances": [
+      {
+        "__bigint": "5396180283"
+      },
+      {
+        "__bigint": "51865920"
+      },
+      {
+        "__bigint": "1"
+      },
+      {
+        "__bigint": "1141440"
+      }
+    ],
+    "preTokenBalances": [],
+    "rewards": [],
+    "status": {
+      "Ok": null
+    }
+  },
+  "slot": {
+    "__bigint": "462534661"
+  },
+  "transaction": {
+    "message": {
+      "accountKeys": [
+        "fndnu15PLXELbLsTqrfbiweBvsBj2o12RoVfkeCCbX2",
+        "6nkiLhcq8Cg6JibNEbYJXdmCu22dYwpptmLaGvYVwZA5",
+        "ComputeBudget111111111111111111111111111111",
+        "ProgM6JCCvbYkfKqJYHePx4xxSUSqJp7rh8Lyv7nk7S"
+      ],
+      "addressTableLookups": [],
+      "header": {
+        "numReadonlySignedAccounts": 0,
+        "numReadonlyUnsignedAccounts": 2,
+        "numRequiredSignatures": 1
+      },
+      "instructions": [
+        {
+          "accounts": [],
+          "data": "K9dDXd",
+          "programIdIndex": 2,
+          "stackHeight": 1
+        },
+        {
+          "accounts": [],
+          "data": "3gJqkocMWaMm",
+          "programIdIndex": 2,
+          "stackHeight": 1
+        },
+        {
+          "accounts": [
+            1,
+            0,
+            3
+          ],
+          "data": "1bYnGZbXQgC5FSydbVEbNoAEkQRSPFaKwxiRrTYhnL7ToYgoKYdCE69TX25uKYwpT1SWfunDg9Wobc4PMvDvVNG1JrCpSXvnWAA87Yj5j8yyPgEYtbUZZ2titQ6iCwNJuuTWEAn2nvGDftb3ZFEuBhmLXiMd1wGTeXYxudihzzy4W1eJyyydFBEmPHRBpbrXpQt4FrjqFZ3pVuuc89tdce6nbsoWmKPPKiKHKTh2Wkzm4AAn5B59TAstrzt73ws4CJJPDHKtHpeY68EP6X4KPJMvskjhVWQysqQxcY39X6jFBFeyJZeWjVW8brLzgkdYr8YdbG3GEfkPonxGrekSWtJQ8c6MuaW7gmNfYPCeA15vMzQmyv47ajb5r6SfcgQ8KARHMXprrs2ZdMw53Jw2uuoJ2ckxfH86vFdZ5WbDHY7yHHNHN8gSJ1dZxdcxDr5j39ezSJSbCX83qyUJbVsQVJN6qa1X2nLQqPCs6YKLT5PNRd964eGEu3mREqTANTqPAqY5ASpoE4AN8NCLgvBfGHmGLgGfssd3vX8tEgHXTDvshEmTGZZGmG7g8TyGjVhgLjJ2a5Kn72DwALzzRUiZ3gupNM2UbGg397ZSyEor2a8TxGEB5GmscqzhFTAqkERDCeWvtXpxGyt6jHk8SZYQFh3bScPRSxF8ocWN78SFHGTjrUD3PniDmqJtg74Fwb4cpbd4jZeyvm2UgiZ2FSjHFnsYscg4QmB6qKmDsruig88CStGmLEYNz8XqV8WiHZSyvMQ4Nc3oepXjFjrVkGXBAa8QDnyYfWoHcTm4pUfESSB64aUydUerJgsMyMqPNP58HLgqcVDhKhG2krPTBebXdzdBvGKdfDbkVAENePyjwbDfMHZM7RTvtogG31o2ekb2XuT74",
+          "programIdIndex": 3,
+          "stackHeight": 1
+        }
+      ],
+      "recentBlockhash": "BQferDKi1Qo4So6QzGZQTd8KczK6JtYq8NYSnuv63QK7"
+    },
+    "signatures": [
+      "4DeTva2SGYKAuPVqVDTw8k4JC1TDNFgmz65jmqD54u28oAqWtkMixqMc9ovTc4F8H3hS9XS1Wv1WAwzt634rq6uN"
+    ]
+  },
+  "transactionIndex": {
+    "__bigint": "8"
+  },
+  "version": {
+    "__bigint": "0"
+  }
+}

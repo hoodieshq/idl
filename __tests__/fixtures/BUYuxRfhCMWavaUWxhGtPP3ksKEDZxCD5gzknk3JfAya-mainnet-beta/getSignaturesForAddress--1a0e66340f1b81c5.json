@@ -1,0 +1,57 @@
+[
+  {
+    "signature": "nbY1bCGiA2gz42jMTu692JtyAwS6wLjAapsi1DpkgDfQamtSJHswg9VQ2C5YLhFfbkhveyEZzMN6Ky5roH2GiXC",
+    "slot": {
+      "__bigint": "413022662"
+    },
+    "err": null,
+    "memo": null,
+    "blockTime": {
+      "__bigint": "1776114191"
+    },
+    "confirmationStatus": "finalized"
+  },
+  {
+    "signature": "QqrotwYKvJjnFhooBZUWpa3AcoAkEFRdV8C4qTWvSjPXseg2R3r2oVBPxBB1KSCGzugadDospu2Y4dtGXXtv9xt",
+    "slot": {
+      "__bigint": "413021665"
+    },
+    "err": {
+      "InstructionError": [
+        {
+          "__bigint": "3"
+        },
+        "AccountAlreadyInitialized"
+      ]
+    },
+    "memo": null,
+    "blockTime": {
+      "__bigint": "1776113795"
+    },
+    "confirmationStatus": "finalized"
+  },
+  {
+    "signature": "3YNuUT5zCY1DEdtc4RMbiYPPu3PZQ3HAty4PGotox56JyKKvWpSz223EUVz39nY7dHaKcirAt8nBf3EjA2bMrzmi",
+    "slot": {
+      "__bigint": "350383071"
+    },
+    "err": null,
+    "memo": null,
+    "blockTime": {
+      "__bigint": "1751362229"
+    },
+    "confirmationStatus": "finalized"
+  },
+  {
+    "signature": "edELf2tXWhJYgtiWcn74e4XpDwEgAuMpm6HomAs3MXNyLwEsr4fyaRGv61XAvtPJm7qnUtebaaaVUuh2BqqQHvk",
+    "slot": {
+      "__bigint": "350378604"
+    },
+    "err": null,
+    "memo": null,
+    "blockTime": {
+      "__bigint": "1751360458"
+    },
+    "confirmationStatus": "finalized"
+  }
+]

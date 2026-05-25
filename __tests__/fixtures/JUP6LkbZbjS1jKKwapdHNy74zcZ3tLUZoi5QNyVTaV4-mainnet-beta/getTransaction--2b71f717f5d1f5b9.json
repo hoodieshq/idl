@@ -1,0 +1,93 @@
+{
+  "slot": {
+    "__bigint": "407826640"
+  },
+  "transaction": {
+    "signatures": [
+      "4VK6A6SpdG7iC6PNhepRbAPvUTNYT5KxjiTKK1ct9UxJvRiMmT7z69Qh2if9ACQcCaovPwogmuuqu4kHjszxyrSk"
+    ],
+    "message": {
+      "header": {
+        "numRequiredSignatures": 1,
+        "numReadonlySignedAccounts": 0,
+        "numReadonlyUnsignedAccounts": 1
+      },
+      "accountKeys": [
+        "9u9iZBWqGsp5hXBxkVZtBTuLSGNAG9gEQLgpuVw39ASg",
+        "8VR5uhX9KDEfZ8jSNJFD1UJ8Qj3RTF4QhY9Tf65Pmp2N",
+        "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4"
+      ],
+      "recentBlockhash": "5QRLc8oRmBJw8PvQcd97QcUbaxYhjjEDcek3fUhstCeA",
+      "instructions": [
+        {
+          "programIdIndex": 2,
+          "accounts": [
+            1,
+            0,
+            0
+          ],
+          "data": "pxNa8qvd4Ae8",
+          "stackHeight": 1
+        }
+      ]
+    }
+  },
+  "meta": {
+    "err": null,
+    "status": {
+      "Ok": null
+    },
+    "fee": {
+      "__bigint": "5000"
+    },
+    "preBalances": [
+      {
+        "__bigint": "15161445353"
+      },
+      {
+        "__bigint": "30046320"
+      },
+      {
+        "__bigint": "6184956904"
+      }
+    ],
+    "postBalances": [
+      {
+        "__bigint": "15191486673"
+      },
+      {
+        "__bigint": "0"
+      },
+      {
+        "__bigint": "6184956904"
+      }
+    ],
+    "innerInstructions": [],
+    "logMessages": [
+      "Program JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4 invoke [1]",
+      "Program log: Instruction: IdlCloseAccount",
+      "Program JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4 consumed 745 of 200000 compute units",
+      "Program JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4 success"
+    ],
+    "preTokenBalances": [],
+    "postTokenBalances": [],
+    "rewards": [],
+    "loadedAddresses": {
+      "writable": [],
+      "readonly": []
+    },
+    "computeUnitsConsumed": {
+      "__bigint": "745"
+    },
+    "costUnits": {
+      "__bigint": "2779"
+    }
+  },
+  "version": "legacy",
+  "blockTime": {
+    "__bigint": "1774072220"
+  },
+  "transactionIndex": {
+    "__bigint": "694"
+  }
+}

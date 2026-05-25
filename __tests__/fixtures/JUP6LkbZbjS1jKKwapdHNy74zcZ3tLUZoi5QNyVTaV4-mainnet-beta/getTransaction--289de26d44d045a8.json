@@ -1,0 +1,89 @@
+{
+  "slot": {
+    "__bigint": "303921821"
+  },
+  "transaction": {
+    "signatures": [
+      "W4HgFAPCqoME9xCmjrkAPav6zwm2RuTVjQTjgdMzSmSUEf8yPM5Zh46Q5BA9bVs3iSJmzk85zifDv8iujK4WjRq"
+    ],
+    "message": {
+      "header": {
+        "numRequiredSignatures": 1,
+        "numReadonlySignedAccounts": 0,
+        "numReadonlyUnsignedAccounts": 1
+      },
+      "accountKeys": [
+        "9u9iZBWqGsp5hXBxkVZtBTuLSGNAG9gEQLgpuVw39ASg",
+        "621TJz7erYdtFPEfwvVR2Zb7VXeXCX9kNskoHJhDpgeg",
+        "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4"
+      ],
+      "recentBlockhash": "DLi3jVqncbYph8usACjQ7GfoV44JFruPNXGA2D9hc56Q",
+      "instructions": [
+        {
+          "programIdIndex": 2,
+          "accounts": [
+            1,
+            0
+          ],
+          "data": "2MLepRekTF8GdESX8FigwEbhspMzK2oZgAHpRsFJXF9kJGCh6YptC45GA9AhcskQLbQFe2t1mMHnKjKoi5N9WYikJnJTthgUaZ8Z2vAzk6ZkPZrLL247TAArzwiyoS3dq3svNjPjtX7XMsvVbvNLckV4xotHVEVSEfJ7TsE1RwYd2xfaQqGQZ5LSYyGjpG73sfcpwDdrJxqna6MMeC5QCCgqLRCo9dyKTnZrEgcfDRn4ugk1fUMohit2nVn4g1pFX421ATyYT5P33gkd6xFuaEidbT4u4YckdQ4twsdTXym133vfs2ELsex9LRpC9ZeFRferqf3CYUFssgiUCAgGcg69rmX39qu7EUBiSBxMWQtLPd2fAzGqVcDocoFUdHyh7cKHaZ1tQZxJ27zyiwdTPhhro3JPM3NoZkqKUVD4BJ5gPMJ1xDErG36RQ4wC5UAvTjJnsDGdFCvMXGav4ysTX7KmWozP8RsJwBQgaE4YMNPoZUv3E3idirKMMfSu6Xah2RHQmdsacD6TGVmtrwfEfEjPegYYyiovAuwwrDa19b1ef7RWCRLHYy7WUFt1S9QHxHrGMDKL4yCinnCyz5MTsQqXE5o7f6XC6R1e64QCwkpUhoukCjtLmrwAzQ6gB4nitYNBzNrRBA93nNmS6gPRqVLx6CPbikACcMRJfwQS7XaeMw1SdJaMj6JaCDxPa1Hf8Aa6gBsE4Zj38MBCppsQZrk1RRquPAhDEgQmpXmktDy8DNhp2T7M3iTtrgwbHFGys36ias1Xh9CyjH6KpPYHNgo7mJrsqJbk9UaubpQCvbh3D58Bu36kbF6EFTQ1esdNkApCRQWfDWew9nAUo2BW7pyPKM761S6JMFcJqRmQX89YShK3M8qozkGyQnH4BadmTBtB7vNkjwBvdcN4pAAE2sbpaVnV1E4xiqhfcXqKPLodMChj2s1oTNFdwLbhRvSLzPnKJEgT5ysXToASN2oSRrbFNcmgH43bBmnFYcwLR34FFtqUuzNZ1TTBMAUNujCHjR93KQE4oJftkpLc2ccttnqUGSRHNfZpCTvFgZvHG69syeX6DwStr4UHEk6o9Ya7DJxf6JopchqJvUS3AmgWwqUhsdokkjjv6EFj4GEZHqrox4j4tfWFjpS9fx75cWUrnXLhJRMaww5wAFjyUhRuskx4Yqqz6vzKVaRXLitBDD3mQ5KjEkHKEKRi7sq5mDPztSDekJkTW8Ux1ykFRQzw1FKU8zNx8kDdFxjFpw1yLqQZ5knNs7hQn9bsCEy8eHvTFCan8DBenPAWXQmAWjtw3jAdBReKtYc4tra6nwpm77AYbWqirYGXX36Kk1Aw4Gy5Td8nnNao2j1zYDFQHaY2Sq9QiXyV3NPnJPSpCuME",
+          "stackHeight": 1
+        }
+      ]
+    }
+  },
+  "meta": {
+    "err": null,
+    "status": {
+      "Ok": null
+    },
+    "fee": {
+      "__bigint": "5000"
+    },
+    "preBalances": [
+      {
+        "__bigint": "20718034572"
+      },
+      {
+        "__bigint": "36226800"
+      },
+      {
+        "__bigint": "1141440"
+      }
+    ],
+    "postBalances": [
+      {
+        "__bigint": "20718029572"
+      },
+      {
+        "__bigint": "36226800"
+      },
+      {
+        "__bigint": "1141440"
+      }
+    ],
+    "innerInstructions": [],
+    "logMessages": [
+      "Program JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4 invoke [1]",
+      "Program log: Instruction: IdlWrite",
+      "Program JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4 consumed 1842 of 200000 compute units",
+      "Program JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4 success"
+    ],
+    "preTokenBalances": [],
+    "postTokenBalances": [],
+    "rewards": [],
+    "loadedAddresses": {
+      "writable": [],
+      "readonly": []
+    },
+    "computeUnitsConsumed": {
+      "__bigint": "1842"
+    }
+  },
+  "version": "legacy",
+  "blockTime": {
+    "__bigint": "1732706257"
+  },
+  "transactionIndex": {
+    "__bigint": "766"
+  }
+}

@@ -1,0 +1,92 @@
+{
+  "slot": {
+    "__bigint": "388820352"
+  },
+  "transaction": {
+    "signatures": [
+      "GYBpEH5r1j2GvnW5rSfZVxuejtSGXGziPsmFhzBEZH7Yz3rga1Aaoopgfc2V3Nz5Ppc5CKzQU4JP1eUUsVriKj2"
+    ],
+    "message": {
+      "header": {
+        "numRequiredSignatures": 1,
+        "numReadonlySignedAccounts": 0,
+        "numReadonlyUnsignedAccounts": 1
+      },
+      "accountKeys": [
+        "9u9iZBWqGsp5hXBxkVZtBTuLSGNAG9gEQLgpuVw39ASg",
+        "G1868iXLfqx8q7vVvZvWzsksN85TZLncEqQPyvuVWdQx",
+        "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4"
+      ],
+      "recentBlockhash": "2rS4BArZjnxXN93iur93dRvoLaTm2U6bjabbQEMQNrRP",
+      "instructions": [
+        {
+          "programIdIndex": 2,
+          "accounts": [
+            1,
+            0
+          ],
+          "data": "KYUCrmkkxrT6ceGUtqpGF17uJpYmHhExK6fNE3QHQGKqiZWFWd3FckcXuhXVPBtUcFzKK7T3CUpwF95hoGYMeSyxwD6UfWxKoAbauBupcibZkYzZEPxyTbaWyxypNBn6kP6v4TrtNYb85fFhUy2vaWjuBNkt2Mouepha162VktR9ShNnWNrkinLH1AtqP6zPuVPSW39XEJPJFqEPCRg1vHDMZ9N1JLzxt78Gf7ok7T4eRExdK66X8e115kyxxjD4iqd9agEBBf2xsySGjGwtsbMCfBjz",
+          "stackHeight": 1
+        }
+      ]
+    }
+  },
+  "meta": {
+    "err": null,
+    "status": {
+      "Ok": null
+    },
+    "fee": {
+      "__bigint": "5000"
+    },
+    "preBalances": [
+      {
+        "__bigint": "10109059026"
+      },
+      {
+        "__bigint": "27610320"
+      },
+      {
+        "__bigint": "2803779208"
+      }
+    ],
+    "postBalances": [
+      {
+        "__bigint": "10109054026"
+      },
+      {
+        "__bigint": "27610320"
+      },
+      {
+        "__bigint": "2803779208"
+      }
+    ],
+    "innerInstructions": [],
+    "logMessages": [
+      "Program JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4 invoke [1]",
+      "Program log: Instruction: IdlWrite",
+      "Program JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4 consumed 1009 of 200000 compute units",
+      "Program JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4 success"
+    ],
+    "preTokenBalances": [],
+    "postTokenBalances": [],
+    "rewards": [],
+    "loadedAddresses": {
+      "writable": [],
+      "readonly": []
+    },
+    "computeUnitsConsumed": {
+      "__bigint": "1009"
+    },
+    "costUnits": {
+      "__bigint": "3093"
+    }
+  },
+  "version": "legacy",
+  "blockTime": {
+    "__bigint": "1766568904"
+  },
+  "transactionIndex": {
+    "__bigint": "124"
+  }
+}

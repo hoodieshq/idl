@@ -1,0 +1,89 @@
+{
+  "slot": {
+    "__bigint": "209169887"
+  },
+  "transaction": {
+    "signatures": [
+      "4yUqDpBcqAFRvrbbZNL5vTgwKgy2yutAdgmgfD6QLwGQD86EToAXeT6PwhNc6LzkxcrMa98d6yC3U9K9vgxYav4h"
+    ],
+    "message": {
+      "header": {
+        "numRequiredSignatures": 1,
+        "numReadonlySignedAccounts": 0,
+        "numReadonlyUnsignedAccounts": 1
+      },
+      "accountKeys": [
+        "9u9iZBWqGsp5hXBxkVZtBTuLSGNAG9gEQLgpuVw39ASg",
+        "25P7VZ6GcU7khMMuhj9MqvQr22r1T6QrVCL7gNduWwqz",
+        "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4"
+      ],
+      "recentBlockhash": "J296qjXhDPAsoTDR9Bbh5F7hXuPGVEETbhX6nD2feg3T",
+      "instructions": [
+        {
+          "programIdIndex": 2,
+          "accounts": [
+            1,
+            0
+          ],
+          "data": "mcDoKyqmHp89fhbkESzKcbVy6pTdjyqdySmfyAA5w7uWADC1qYfYcZuvjoHjkbdux1Sc9Y2LvVtJMFqYbu7BRXTAP5Md7xWsmFW2eeh11RWNZCXYwxx49PndSg4kZfzNjgTgMhFEWrc6fK4XQd19rrCaCTsYhoReEF79nJyJRS4GGqCz5V35wtk7CMNRKwP2GJsjtCqzmY5vY7PBu9GVu2rrYjyGE1D2wpKUiEHjKUstKwwwtDUJXx5mSe7t89FXxmGcu357ZTe7M1CagXDAgwNhPu7xMBtQRnbSER33SR8orHw2Rz5",
+          "stackHeight": 1
+        }
+      ]
+    }
+  },
+  "meta": {
+    "err": null,
+    "status": {
+      "Ok": null
+    },
+    "fee": {
+      "__bigint": "5000"
+    },
+    "preBalances": [
+      {
+        "__bigint": "22677977178"
+      },
+      {
+        "__bigint": "23552640"
+      },
+      {
+        "__bigint": "1141440"
+      }
+    ],
+    "postBalances": [
+      {
+        "__bigint": "22677972178"
+      },
+      {
+        "__bigint": "23552640"
+      },
+      {
+        "__bigint": "1141440"
+      }
+    ],
+    "innerInstructions": [],
+    "logMessages": [
+      "Program JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4 invoke [1]",
+      "Program log: Instruction: IdlWrite",
+      "Program JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4 consumed 2980 of 200000 compute units",
+      "Program JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4 success"
+    ],
+    "preTokenBalances": [],
+    "postTokenBalances": [],
+    "rewards": [],
+    "loadedAddresses": {
+      "writable": [],
+      "readonly": []
+    },
+    "computeUnitsConsumed": {
+      "__bigint": "2980"
+    }
+  },
+  "version": "legacy",
+  "blockTime": {
+    "__bigint": "1691053163"
+  },
+  "transactionIndex": {
+    "__bigint": "64"
+  }
+}

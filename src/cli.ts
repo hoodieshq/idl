@@ -1,9 +1,9 @@
 #!/usr/bin/env node
-import fs from 'node:fs';
+import fs, { realpathSync } from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
-import { Address, createSolanaRpc, type Rpc, type SolanaRpcApi } from '@solana/kit';
+import { Address, createSolanaRpc } from '@solana/kit';
 import { Command } from 'commander';
 import pc from 'picocolors';
 
@@ -19,14 +19,15 @@ const PKG_VERSION: string = (() => {
 })();
 
 import { findAnchorIdlAddress, reconstructAnchorHistory } from './anchor.js';
-import { fetchCurrentIdlPreferPmp } from './current-idl.js';
+import { fetchIdl } from './current-idl.js';
+import { fetchLatestIdls } from './latest-idl.js';
 import { buildPmpIdlLookups } from './pmp-idl.js';
 import {
     COMPRESSION_NAME,
     DISC_LABEL,
     ENCODING_NAME,
     FORMAT_NAME,
-    findPmpMetadataPda,
+    findPmpMetadataAddress,
     reconstructPmpHistory,
     type VirtualState,
 } from './program-metadata.js';
@@ -300,7 +301,10 @@ async function runSingle(
         let lastError: Error | null = null;
         for (const lookup of pmpLookups) {
             try {
-                const snaps = await reconstructPmpHistory(rpc as Rpc<SolanaRpcApi>, lookup.address);
+                const snaps = await reconstructPmpHistory(rpc, addr, {
+                    authority: lookup.authority,
+                    seed,
+                });
                 if (snaps.length > 0) {
                     targetAddr = lookup.address;
                     pmpAuthority = lookup.authority;
@@ -316,7 +320,7 @@ async function runSingle(
             return;
         }
     } else if (idlType === 'pmp') {
-        targetAddr = await findPmpMetadataPda(addr, seed, authority);
+        targetAddr = await findPmpMetadataAddress(addr, seed, authority);
     } else {
         targetAddr = await findAnchorIdlAddress(addr);
     }
@@ -334,9 +338,12 @@ async function runSingle(
     if (snapshots === null) {
         try {
             if (idlType === 'pmp') {
-                snapshots = await reconstructPmpHistory(rpc as Rpc<SolanaRpcApi>, targetAddr);
+                snapshots = await reconstructPmpHistory(rpc, addr, {
+                    authority,
+                    seed,
+                });
             } else {
-                snapshots = await reconstructAnchorHistory(rpc as Rpc<SolanaRpcApi>, addr);
+                snapshots = await reconstructAnchorHistory(rpc, addr);
             }
         } catch (err) {
             console.error(pc.red(`[${idlType.toUpperCase()}] ${(err as Error).message ?? String(err)}`));
@@ -364,85 +371,152 @@ async function runSingle(
 
 // ─── CLI ─────────────────────────────────────────────────────────────────────
 
-const program = new Command()
-    .name('idl')
-    .description('Reconstruct historical IDL versions from on-chain Solana transactions')
-    .version(PKG_VERSION)
-    .argument('<program-address>', 'Program address to look up IDL history for')
-    .option('-r, --rpc <url>', 'Solana RPC URL (or set RPC_URL env var)')
-    .option('-t, --type <type>', 'IDL type: "pmp", "anchor", or "both" (auto-detected if omitted)')
-    .option('-s, --seed <seed>', 'Metadata seed (PMP only)', 'idl')
-    .option('-a, --authority <address>', 'Authority address (for non-canonical PMP metadata)')
-    .option('-o, --output <dir>', 'Directory to save full snapshots')
-    .option('--dump-idls <dir>', 'Directory to write each distinct IDL version')
-    .option(
-        '--current',
-        'Fetch only the latest on-chain IDL (PMP first, then Anchor); JSON on stdout, same as GET /api/idl',
-    )
-    .action(async (programAddress: string, opts) => {
-        const rpcUrl: string | undefined = opts.rpc ?? process.env.RPC_URL;
-        if (!rpcUrl) {
-            console.error(
-                pc.red('Error: No RPC URL provided. Use --rpc <url> or set the RPC_URL environment variable.'),
-            );
-            process.exit(1);
-        }
-
-        const rpc = createSolanaRpc(rpcUrl);
-        const addr = programAddress as Address;
-        const seed: string = opts.seed ?? 'idl';
-        const authority: Address | undefined = opts.authority ? (opts.authority as Address) : undefined;
-
-        if (opts.current) {
-            if (opts.output || opts.dumpIdls) {
-                console.error(pc.red('Error: --current cannot be used with --output or --dump-idls.'));
-                process.exit(1);
-            }
-            if (opts.type != null && opts.type !== 'auto') {
+/**
+ * Build a fresh commander instance. Exported as a function (rather than a
+ * singleton) so each test invocation gets clean parser state.
+ */
+export function buildProgram(): Command {
+    return new Command()
+        .name('idl')
+        .description(
+            'Fetch on-chain IDLs for Solana programs. ' +
+                'Default: the live IDL (canonical PMP → fndn fallback PMP → Anchor). ' +
+                'Use --latest for the side-by-side payload with slot/time, or --history to replay the full version history.',
+        )
+        .version(PKG_VERSION)
+        .argument('<program-address>', 'Program address to look up an IDL for')
+        .option('-r, --rpc <url>', 'Solana RPC URL (or set RPC_URL env var)')
+        .option('-s, --seed <seed>', 'Metadata seed (PMP only)', 'idl')
+        .option('-a, --authority <address>', 'Authority address (for non-canonical PMP metadata)')
+        .option(
+            '--latest',
+            'Print {programId, pmpAddress, anchorAddress, pmp[], anchor[]} with version/slot/time (same shape as GET /api/latest)',
+        )
+        .option('--history', 'Replay the full IDL version history from on-chain transactions')
+        .option('-t, --type <type>', '[--history only] IDL type: "pmp", "anchor", or "both" (auto-detected if omitted)')
+        .option('-o, --output <dir>', '[--history only] Directory to save full snapshots')
+        .option('--dump-idls <dir>', '[--history only] Directory to write each distinct IDL version')
+        .action(async (programAddress: string, opts) => {
+            const rpcUrl: string | undefined = opts.rpc ?? process.env.RPC_URL;
+            if (!rpcUrl) {
                 console.error(
-                    pc.red(
-                        'Error: --current cannot be used with --type (resolution is always PMP first, then Anchor).',
-                    ),
+                    pc.red('Error: No RPC URL provided. Use --rpc <url> or set the RPC_URL environment variable.'),
                 );
                 process.exit(1);
             }
 
-            const result = await fetchCurrentIdlPreferPmp(rpc, addr, {
-                seed,
-                ...(authority !== undefined ? { authority } : {}),
-            });
-            if (!result) {
-                console.error(pc.red('No IDL found for this program (checked PMP and Anchor).'));
+            const rpc = createSolanaRpc(rpcUrl);
+            const addr = programAddress as Address;
+            const seed: string = opts.seed ?? 'idl';
+            const authority: Address | undefined = opts.authority ? (opts.authority as Address) : undefined;
+
+            if (opts.latest && opts.history) {
+                console.error(pc.red('Error: --latest and --history cannot be combined.'));
                 process.exit(1);
             }
-            console.log(JSON.stringify(result, null, 2));
-            return;
-        }
 
-        let typeArg: string = opts.type ?? 'auto';
-
-        if (typeArg === 'auto') {
-            console.log(pc.dim('Auto-detecting IDL type...'));
-            typeArg = await detectIdlType(rpc, addr, seed, authority);
-            console.log(pc.dim(`Detected: ${typeArg}\n`));
-        }
-
-        const types: Array<'pmp' | 'anchor'> = typeArg === 'both' ? ['pmp', 'anchor'] : [typeArg as 'pmp' | 'anchor'];
-
-        for (const t of types) {
-            const outDir = opts.output ? (types.length > 1 ? path.join(opts.output, t) : opts.output) : undefined;
-            const dumpDir = opts.dumpIdls
-                ? types.length > 1
-                    ? path.join(opts.dumpIdls, t)
-                    : opts.dumpIdls
-                : undefined;
-
-            await runSingle(rpc, rpcUrl, addr, t, seed, authority, outDir, dumpDir);
-
-            if (types.length > 1 && t !== types[types.length - 1]) {
-                console.log(pc.dim('─'.repeat(60) + '\n'));
+            // History-only flags guard. `--type`/`--output`/`--dump-idls` describe how
+            // to replay history, so they make no sense in the live (default/--latest) modes.
+            if (!opts.history) {
+                if (opts.output || opts.dumpIdls) {
+                    console.error(pc.red('Error: --output and --dump-idls are only valid with --history.'));
+                    process.exit(1);
+                }
+                if (opts.type != null && opts.type !== 'auto') {
+                    console.error(
+                        pc.red(
+                            'Error: --type is only valid with --history (live IDL resolution is always PMP → fndn fallback → Anchor).',
+                        ),
+                    );
+                    process.exit(1);
+                }
             }
-        }
-    });
 
-program.parse();
+            // ─── --latest (side-by-side with slot/time) ────────────────────────────
+            if (opts.latest) {
+                const latest = await fetchLatestIdls(rpc, addr, {
+                    seed,
+                    ...(authority !== undefined ? { authority } : {}),
+                });
+                console.log(JSON.stringify(latest, null, 2));
+                return;
+            }
+
+            // ─── Default: bare IDL ─────────────────────────────────────────────────
+            if (!opts.history) {
+                const result = await fetchIdl(rpc, addr, {
+                    seed,
+                    ...(authority !== undefined ? { authority } : {}),
+                });
+                if (!result) {
+                    console.error(pc.red('No IDL found for this program (checked PMP and Anchor).'));
+                    process.exit(1);
+                }
+
+                // Bare IDL: emit object as pretty JSON, or pass through a non-JSON
+                // string IDL unchanged (so pipes get exactly what was uploaded).
+                if (typeof result.idl === 'string') {
+                    console.log(result.idl);
+                } else {
+                    console.log(JSON.stringify(result.idl, null, 2));
+                }
+                return;
+            }
+
+            // ─── History replay (--history) ───────────────────────────────────────
+            let typeArg: string = opts.type ?? 'auto';
+
+            if (typeArg === 'auto') {
+                console.log(pc.dim('Auto-detecting IDL type...'));
+                typeArg = await detectIdlType(rpc, addr, seed, authority);
+                console.log(pc.dim(`Detected: ${typeArg}\n`));
+            }
+
+            const types: Array<'pmp' | 'anchor'> =
+                typeArg === 'both' ? ['pmp', 'anchor'] : [typeArg as 'pmp' | 'anchor'];
+
+            for (const t of types) {
+                const outDir = opts.output ? (types.length > 1 ? path.join(opts.output, t) : opts.output) : undefined;
+                const dumpDir = opts.dumpIdls
+                    ? types.length > 1
+                        ? path.join(opts.dumpIdls, t)
+                        : opts.dumpIdls
+                    : undefined;
+
+                await runSingle(rpc, rpcUrl, addr, t, seed, authority, outDir, dumpDir);
+
+                if (types.length > 1 && t !== types[types.length - 1]) {
+                    console.log(pc.dim('─'.repeat(60) + '\n'));
+                }
+            }
+        });
+}
+
+/**
+ * Parse and run the CLI with the given argv (defaults to `process.argv`).
+ * Returns a promise that resolves when the action completes — including async
+ * actions — which makes it usable from tests and from the binary entrypoint.
+ */
+export async function runCli(argv: string[] = process.argv.slice(2)): Promise<void> {
+    await buildProgram().parseAsync(argv, { from: 'user' });
+}
+
+/**
+ * `true` when this module is the process entrypoint (so we can auto-run
+ * the CLI). The realpath dance handles both `tsx src/cli.ts` and the
+ * symlinked `node_modules/.bin/idl` binary launcher.
+ */
+function isMainModule(): boolean {
+    if (!process.argv[1]) return false;
+    try {
+        const here = realpathSync(fileURLToPath(import.meta.url));
+        const entry = realpathSync(process.argv[1]);
+        return here === entry || pathToFileURL(entry).href === import.meta.url;
+    } catch {
+        return false;
+    }
+}
+
+if (isMainModule()) {
+    void runCli();
+}

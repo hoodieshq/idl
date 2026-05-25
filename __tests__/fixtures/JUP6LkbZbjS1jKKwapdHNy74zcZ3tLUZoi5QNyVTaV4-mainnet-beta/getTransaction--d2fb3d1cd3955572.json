@@ -1,0 +1,87 @@
+{
+  "slot": {
+    "__bigint": "327064011"
+  },
+  "transaction": {
+    "signatures": [
+      "5fWYuq8o6VBjyQb3pDj5eEgBBgu51PUW2KZohYxPXtK4sNCR8mtrEcUw7u1S4XNQ3KG11KyVnWADFJWkdbdeQLGB"
+    ],
+    "message": {
+      "header": {
+        "numRequiredSignatures": 1,
+        "numReadonlySignedAccounts": 0,
+        "numReadonlyUnsignedAccounts": 1
+      },
+      "accountKeys": [
+        "CkChKpogPUNHa5Sd3QGVppJiqgDrZS1bHP21MHDSLLi2",
+        "7rFvDkqkQEyqTcxKtWWUmfG3bGSXQGA2WRnzid68ideo",
+        "11111111111111111111111111111111"
+      ],
+      "recentBlockhash": "CdT99tubXHMF8eHEX3ZQ5NVYtgL3uDaB4mSBgS8utLi5",
+      "instructions": [
+        {
+          "programIdIndex": 2,
+          "accounts": [
+            0,
+            1
+          ],
+          "data": "3Bxs4hTxqAiqLg8P",
+          "stackHeight": 1
+        }
+      ]
+    }
+  },
+  "meta": {
+    "err": null,
+    "status": {
+      "Ok": null
+    },
+    "fee": {
+      "__bigint": "5000"
+    },
+    "preBalances": [
+      {
+        "__bigint": "269041207"
+      },
+      {
+        "__bigint": "23956320"
+      },
+      {
+        "__bigint": "1"
+      }
+    ],
+    "postBalances": [
+      {
+        "__bigint": "209412541"
+      },
+      {
+        "__bigint": "83579986"
+      },
+      {
+        "__bigint": "1"
+      }
+    ],
+    "innerInstructions": [],
+    "logMessages": [
+      "Program 11111111111111111111111111111111 invoke [1]",
+      "Program 11111111111111111111111111111111 success"
+    ],
+    "preTokenBalances": [],
+    "postTokenBalances": [],
+    "rewards": [],
+    "loadedAddresses": {
+      "writable": [],
+      "readonly": []
+    },
+    "computeUnitsConsumed": {
+      "__bigint": "150"
+    }
+  },
+  "version": "legacy",
+  "blockTime": {
+    "__bigint": "1742099639"
+  },
+  "transactionIndex": {
+    "__bigint": "1226"
+  }
+}
