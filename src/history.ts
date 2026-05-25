@@ -1,5 +1,5 @@
 import { type Seed } from '@solana-program/program-metadata';
-import type { Address } from '@solana/kit';
+import { assertIsAddress, type Address } from '@solana/kit';
 
 import { findAnchorIdlAddress, reconstructAnchorHistory } from './anchor.js';
 import { buildPmpIdlLookups } from './pmp-idl.js';
@@ -7,10 +7,10 @@ import { reconstructPmpHistory } from './program-metadata.js';
 import type { Snapshot, SolanaRpcClient } from './rpc.js';
 
 export type AllHistories = {
-    programId: string;
+    programId: Address;
     /** PMP PDA whose history won (first non-empty), or the canonical PDA if all empty. */
-    pmpAddress: string;
-    anchorAddress: string;
+    pmpAddress: Address;
+    anchorAddress: Address;
     /** Full PMP snapshot history. Empty when no PMP IDL has ever been published. */
     pmp: Snapshot[];
     /** Full Anchor snapshot history. Empty when no Anchor IDL has ever been published. */
@@ -36,6 +36,7 @@ export async function fetchAllHistories(
     programId: Address,
     options?: { seed?: Seed; authority?: Address | null },
 ): Promise<AllHistories> {
+    assertIsAddress(programId);
     const seed = options?.seed ?? 'idl';
 
     const lookups = await buildPmpIdlLookups(programId, seed, options?.authority);
@@ -64,9 +65,9 @@ export async function fetchAllHistories(
 
     return {
         anchor,
-        anchorAddress: anchorAddress as string,
+        anchorAddress,
         pmp: pmpResult?.snapshots ?? [],
-        pmpAddress: (pmpResult?.address ?? canonicalPmpAddress) as string,
-        programId: programId as string,
+        pmpAddress: pmpResult?.address ?? canonicalPmpAddress,
+        programId,
     };
 }

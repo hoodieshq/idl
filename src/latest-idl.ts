@@ -46,9 +46,9 @@ export type LatestIdlVersion = {
 };
 
 export type LatestIdls = {
-    programId: string;
-    pmpAddress: string;
-    anchorAddress: string;
+    programId: Address;
+    pmpAddress: Address;
+    anchorAddress: Address;
     /** Either empty (no PMP IDL on-chain) or a single-element array. */
     pmp: LatestIdlVersion[];
     /** Either empty (no Anchor IDL on-chain) or a single-element array. */
@@ -76,8 +76,7 @@ async function getLastWriteSlot(
     account: Address,
 ): Promise<{ slot: string; time: string | null } | null> {
     try {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const sigs = await (rpc as any).getSignaturesForAddress(account, { limit: 1 }).send();
+        const sigs = await rpc.getSignaturesForAddress(account, { limit: 1 }).send();
         if (!sigs || sigs.length === 0) return null;
         return { slot: sigs[0].slot.toString(), time: fmtTime(sigs[0].blockTime) };
     } catch {
@@ -108,8 +107,8 @@ export async function fetchLatestIdls(
 ): Promise<LatestIdls> {
     const seed: Seed = options?.seed ?? 'idl';
 
-    const [canonicalPmpPda] = await findMetadataPda({
-        authority: null,
+    const [pmpPdaFallback] = await findMetadataPda({
+        authority: options?.authority ?? null,
         program: programId,
         seed,
     });
@@ -120,7 +119,7 @@ export async function fetchLatestIdls(
         fetchAnchorIdl(rpc, programId),
     ]);
 
-    const pmpMetadataAddress = pmpResolved?.address ?? canonicalPmpPda;
+    const pmpMetadataAddress = pmpResolved?.address ?? pmpPdaFallback;
 
     const [pmpLastWrite, anchorLastWrite] = await Promise.all([
         pmpResolved ? getLastWriteSlot(rpc, pmpMetadataAddress) : null,
@@ -129,9 +128,9 @@ export async function fetchLatestIdls(
 
     return {
         anchor: anchor ? [buildVersion('anchor', anchor.content, anchorLastWrite)] : [],
-        anchorAddress: anchorAddr as string,
+        anchorAddress: anchorAddr,
         pmp: pmpResolved ? [buildVersion('pmp', pmpResolved.content, pmpLastWrite)] : [],
-        pmpAddress: pmpMetadataAddress as string,
-        programId: programId as string,
+        pmpAddress: pmpMetadataAddress,
+        programId,
     };
 }

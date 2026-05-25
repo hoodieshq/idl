@@ -22,6 +22,7 @@ import { fileURLToPath } from 'node:url';
 import * as kit from '@solana/kit';
 import type { Address } from '@solana/kit';
 
+import type { LatestIdls } from '../../src/latest-idl.js';
 import { makeFakeRpc } from '../fixtures/_helpers/fake-rpc.js';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -144,21 +145,7 @@ describe('CLI ↔ library equivalence on BUYux', () => {
 
             expect(exitCode).toBe(0);
             expect(stderr).toBe('');
-            const parsed = JSON.parse(stdout) as {
-                programId: string;
-                pmpAddress: string;
-                anchorAddress: string;
-                pmp: Array<{
-                    type: string;
-                    slot: string | null;
-                    time: string | null;
-                    activeFrom: { slot: string; time: string | null } | null;
-                    activeTo: string;
-                    content: string;
-                    version: string | null;
-                }>;
-                anchor: typeof parsed.pmp;
-            };
+            const parsed = JSON.parse(stdout) as LatestIdls;
             expect(parsed.programId).toBe(BUYUX);
             expect(typeof parsed.pmpAddress).toBe('string');
             expect(typeof parsed.anchorAddress).toBe('string');

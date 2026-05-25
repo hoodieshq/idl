@@ -10,7 +10,9 @@
  *   bun run __tests__/fixtures/record.ts TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA  devnet
  *
  * RPC URLs are read from `RPC_MAINNET` / `RPC_DEVNET`. The script falls back
- * to `web/.env.local` if those env vars are not already set in the shell.
+ * to `web/.env.local` if those env vars are not set in the shell, and finally
+ * to the public Solana endpoint for the cluster (with a warning) so a fresh
+ * clone can record fixtures without any setup.
  */
 
 import { existsSync, readFileSync } from 'node:fs';
@@ -52,17 +54,22 @@ function loadDotEnvLocal(): void {
     }
 }
 
+const PUBLIC_RPC_URL: Record<Cluster, string> = {
+    devnet: 'https://api.devnet.solana.com',
+    'mainnet-beta': 'https://api.mainnet-beta.solana.com',
+};
+
 function rpcUrlFor(cluster: Cluster): string {
     loadDotEnvLocal();
     const envName = cluster === 'mainnet-beta' ? 'RPC_MAINNET' : 'RPC_DEVNET';
     const url = process.env[envName] ?? process.env.RPC_URL;
-    if (!url) {
-        throw new Error(
-            `Set ${envName} (or RPC_URL) before recording fixtures. ` +
-                `Checked process.env and web/.env.local.`,
-        );
-    }
-    return url;
+    if (url) return url;
+    const fallback = PUBLIC_RPC_URL[cluster];
+    console.warn(
+        `[record] ${envName} not set — falling back to the public endpoint ${fallback}. ` +
+            `Recording will be slow and rate-limited; set ${envName} (or RPC_URL) to a private endpoint for serious use.`,
+    );
+    return fallback;
 }
 
 async function recordProgram(programId: Address, cluster: Cluster): Promise<void> {
