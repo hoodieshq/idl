@@ -16,7 +16,7 @@ Fetch and reconstruct Solana program IDLs from on-chain accounts. Supports both 
 ```bash
 npm install @solana/idl @solana/kit
 # or
-bun add @solana/idl @solana/kit
+pnpm add @solana/idl @solana/kit
 ```
 
 `@solana/kit` is a peer dependency.
@@ -142,8 +142,8 @@ A Next.js UI and HTTP API live under `web/`. The UI exposes the same three capab
 ```bash
 cd web
 cp .env.example .env.local   # set RPC_MAINNET / RPC_DEVNET
-npm install
-npm run dev                   # http://localhost:3000
+pnpm install
+pnpm run dev                  # http://localhost:3000
 ```
 
 Deploy to Vercel by setting the project **root directory** to `web` and adding `RPC_MAINNET` and/or `RPC_DEVNET` in the environment. A legacy `RPC_URL` is still honored as a fallback for `mainnet-beta` only.
@@ -194,10 +194,10 @@ Returns `null` if none resolves.
 ## Development
 
 ```bash
-bun install
-bun test           # unit + offline integration (recorded fixtures)
-bun run build      # dual ESM + CJS bundles via tsup, .d.ts via tsc
-bun run typecheck
+pnpm install
+pnpm test          # unit + offline integration (recorded fixtures, via vitest)
+pnpm run build     # dual ESM + CJS bundles via tsup, .d.ts via tsc
+pnpm run typecheck
 ```
 
 The build emits both `dist/index.js` (ESM) and `dist/index.cjs` (CJS) plus type
@@ -209,14 +209,14 @@ through the package `exports` map.
 Integration tests run against **recorded fixtures** in `__tests__/fixtures/<program>-<cluster>/` — every RPC response the production code paths need is serialized to disk, so the suite is hermetic and offline. To refresh or add fixtures (requires `RPC_MAINNET` / `RPC_DEVNET` or `web/.env.local`):
 
 ```bash
-bun run record:fixtures -- BUYuxRfhCMWavaUWxhGtPP3ksKEDZxCD5gzknk3JfAya mainnet-beta
-bun run record:fixtures -- TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA  devnet
+pnpm run record:fixtures BUYuxRfhCMWavaUWxhGtPP3ksKEDZxCD5gzknk3JfAya mainnet-beta
+pnpm run record:fixtures TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA  devnet
 ```
 
 The recorder reuses any fixture already on disk, so reruns only fetch what's missing.
 
 ```bash
-bun run test:integration    # only the integration suite (fixture-backed, offline)
+pnpm run test:integration    # only the integration suite (fixture-backed, offline)
 ```
 
 ## License
