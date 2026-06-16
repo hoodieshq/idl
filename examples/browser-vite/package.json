@@ -1,0 +1,19 @@
+{
+    "name": "idl-example-browser-vite",
+    "version": "0.0.0",
+    "private": true,
+    "type": "module",
+    "description": "Minimal Vite browser example for @solana/idl.",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "serve": "vite preview --port 8772 --strictPort"
+    },
+    "dependencies": {
+        "@solana/idl": "workspace:*",
+        "@solana/kit": "^6.8.0"
+    },
+    "devDependencies": {
+        "vite": "^6.0.0"
+    }
+}
