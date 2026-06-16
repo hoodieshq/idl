@@ -28,9 +28,14 @@ async function sha256(input: string): Promise<Uint8Array> {
     return new Uint8Array(digest);
 }
 
-/** First 8 bytes of `sha256("global:<name>")` — an Anchor >=0.30 instruction discriminator. */
+/**
+ * First 8 bytes of `sha256("global:<name>")` — an Anchor >=0.30 instruction
+ * discriminator. Uses `.slice` (not `.subarray`) so each discriminator is a
+ * standalone 8-byte buffer rather than a view over the 32-byte digest — keeps
+ * `.buffer`/`DataView` access correct and matches `idlIxTag`.
+ */
 async function anchorGlobalDisc(name: string): Promise<Uint8Array> {
-    return (await sha256(`global:${name}`)).subarray(0, 8);
+    return (await sha256(`global:${name}`)).slice(0, 8);
 }
 
 type GlobalDiscName =
@@ -92,8 +97,12 @@ export function getDiscriminators(): Promise<Discriminators> {
             anchorGlobalDisc('write'),
         ]);
 
-        return {
-            global: {
+        // Freeze the memoized snapshot so a consumer can't swap out a
+        // discriminator and corrupt matching for the lifetime of the process.
+        // (The byte arrays themselves can't be `Object.freeze`d — it throws on
+        // typed arrays with elements — but they're never mutated internally.)
+        return Object.freeze({
+            global: Object.freeze({
                 close,
                 createBuffer,
                 idlClose,
@@ -104,9 +113,9 @@ export function getDiscriminators(): Promise<Discriminators> {
                 setAuthority,
                 setBuffer,
                 write,
-            },
+            }),
             idlIxTag: idlIxTagHash.slice(0, 8).reverse(),
-        };
+        });
     })();
     return discriminatorsPromise;
 }
