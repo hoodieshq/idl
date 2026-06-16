@@ -11,20 +11,20 @@ const webpack = require('webpack');
 //     references them. webpack 5 already provides `global`.
 module.exports = {
     entry: './src/main.ts',
-    output: {
-        path: path.resolve(__dirname, 'dist'),
-        filename: 'main.js',
-        clean: true,
-    },
-    resolve: {
-        extensions: ['.ts', '.js'],
-        fallback: { stream: false },
-    },
     module: {
-        rules: [{ test: /\.ts$/, loader: 'ts-loader', options: { transpileOnly: true } }],
+        rules: [{ loader: 'ts-loader', options: { transpileOnly: true }, test: /\.ts$/ }],
+    },
+    output: {
+        clean: true,
+        filename: 'main.js',
+        path: path.resolve(__dirname, 'dist'),
     },
     plugins: [
         new webpack.ProvidePlugin({ Buffer: ['buffer', 'Buffer'], process: 'process/browser' }),
         new HtmlWebpackPlugin({ template: './src/index.html' }),
     ],
+    resolve: {
+        extensions: ['.ts', '.js'],
+        fallback: { stream: false },
+    },
 };

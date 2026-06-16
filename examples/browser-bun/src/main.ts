@@ -8,8 +8,8 @@ import { address } from '@solana/kit';
 const PROGRAM = address('JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4');
 const GOLDEN = {
     anchorIdlPda: 'C88XWfp26heEmDkmfSzeXP7Fd7GQJ2j9dDTUsyiZbUTa',
-    pmpPda: 'FDDfotwLyeLhUQ62ugzgTjwTvF3r64tPRVsKwsqRrbbC',
     lookupCount: 2,
+    pmpPda: 'FDDfotwLyeLhUQ62ugzgTjwTvF3r64tPRVsKwsqRrbbC',
 };
 
 function line(msg: string): void {

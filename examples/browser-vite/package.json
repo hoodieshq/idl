@@ -2,8 +2,8 @@
     "name": "idl-example-browser-vite",
     "version": "0.0.0",
     "private": true,
-    "type": "module",
     "description": "Minimal Vite browser example for @solana/idl.",
+    "type": "module",
     "scripts": {
         "dev": "vite",
         "build": "vite build",

@@ -9,14 +9,14 @@ import { build } from 'esbuild';
 // With those two, @solana/idl bundles for the browser with no node:* and no
 // runtime shims.
 await build({
-    entryPoints: ['src/main.ts'],
-    bundle: true,
-    format: 'esm',
-    platform: 'browser',
-    outfile: 'dist/main.js',
-    define: { global: 'globalThis' },
     alias: { '@iarna/toml': './stub.js', yaml: './stub.js' },
+    bundle: true,
+    define: { global: 'globalThis' },
+    entryPoints: ['src/main.ts'],
+    format: 'esm',
     logLevel: 'info',
+    outfile: 'dist/main.js',
+    platform: 'browser',
 });
 
 mkdirSync('dist', { recursive: true });

@@ -2,8 +2,8 @@
     "name": "idl-example-browser-bun",
     "version": "0.0.0",
     "private": true,
-    "type": "module",
     "description": "Minimal bun browser example for @solana/idl.",
+    "type": "module",
     "scripts": {
         "build": "bun build ./src/main.ts --outdir ./dist --target browser && cp index.html dist/index.html",
         "serve": "serve dist -l 8770"

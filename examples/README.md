@@ -7,12 +7,12 @@ these builds. Every example runs the same self-test (`src/main.ts`): derive the
 Anchor/PMP PDAs via the package's pure WebCrypto path (no network) and assert they
 match Node. **All four verified PASS in a real browser.**
 
-| Example                                 | Bundler   | Browser recipe                                                                |
-| --------------------------------------- | --------- | ----------------------------------------------------------------------------- |
-| [`browser-bun`](./browser-bun)          | bun       | define `global` (HTML shim); `Buffer` auto-polyfilled                         |
-| [`browser-esbuild`](./browser-esbuild)  | esbuild   | alias `@iarna/toml`/`yaml` → stub; `define: { global: 'globalThis' }`        |
-| [`browser-vite`](./browser-vite)        | Vite      | alias `@iarna/toml`/`yaml` → stub; `define: { global: 'globalThis' }`        |
-| [`browser-webpack`](./browser-webpack)  | webpack 5 | `resolve.fallback: { stream: false }`; `ProvidePlugin` for `Buffer`/`process` |
+| Example                                | Bundler   | Browser recipe                                                                |
+| -------------------------------------- | --------- | ----------------------------------------------------------------------------- |
+| [`browser-bun`](./browser-bun)         | bun       | define `global` (HTML shim); `Buffer` auto-polyfilled                         |
+| [`browser-esbuild`](./browser-esbuild) | esbuild   | alias `@iarna/toml`/`yaml` → stub; `define: { global: 'globalThis' }`         |
+| [`browser-vite`](./browser-vite)       | Vite      | alias `@iarna/toml`/`yaml` → stub; `define: { global: 'globalThis' }`         |
+| [`browser-webpack`](./browser-webpack) | webpack 5 | `resolve.fallback: { stream: false }`; `ProvidePlugin` for `Buffer`/`process` |
 
 ## Run
 
