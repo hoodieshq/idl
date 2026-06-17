@@ -40,6 +40,9 @@ export type IdlDecodeReason =
  * from an RPC/transport {@link https://github.com/anza-xyz/kit SolanaError}
  * (upstream is flaky). Callers typically map this to a "present but
  * undecodable" outcome (e.g. HTTP 200 with `null` body) rather than a retry.
+ *
+ * TODO(anza-xyz/kit#1576): build on `createCodedErrorClass` once it ships, so
+ * this aligns with kit's coded-error ergonomics instead of a bespoke subclass.
  */
 export class IdlDecodeError extends Error {
     override readonly name = 'IdlDecodeError';
