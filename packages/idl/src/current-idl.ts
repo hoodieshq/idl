@@ -46,12 +46,12 @@ type AnchorDecodeResult =
     | { ok: false; reason: 'inflate'; cause: unknown };
 
 /**
- * Decode raw Anchor `IdlAccount` bytes, reporting *why* decoding failed so
- * callers that care (e.g. {@link resolveAnchorIdl}) can surface a typed error
- * with the original cause. Most callers want {@link decodeAnchorIdlAccountBytes},
- * which flattens this to `string | null`.
+ * Decode raw Anchor `IdlAccount` bytes into a discriminated result so callers
+ * can tell *why* decoding failed — a `layout` mismatch vs an `inflate` failure
+ * (which carries the original zlib error as `cause`). Callers that only need
+ * "content or nothing" check `result.ok`.
  */
-async function tryDecodeAnchorIdlAccountBytes(raw: Uint8Array): Promise<AnchorDecodeResult> {
+async function decodeAnchorIdlAccount(raw: Uint8Array): Promise<AnchorDecodeResult> {
     if (raw.length <= ANCHOR_ACCOUNT_HEADER_LEN) return { ok: false, reason: 'layout' };
 
     const dataLen = readU32LE(raw, ANCHOR_ACCOUNT_LEN_OFFSET);
@@ -64,17 +64,6 @@ async function tryDecodeAnchorIdlAccountBytes(raw: Uint8Array): Promise<AnchorDe
     } catch (cause) {
         return { cause, ok: false, reason: 'inflate' };
     }
-}
-
-/**
- * Shared Anchor IdlAccount decoder used by both {@link fetchAnchorIdl} (which
- * derives the PDA from a program id) and {@link fetchAnchorIdlFromBuffer}
- * (which takes a raw account address). Returns the decompressed IDL JSON, or
- * null if the bytes don't match the IdlAccount layout.
- */
-async function decodeAnchorIdlAccountBytes(raw: Uint8Array): Promise<string | null> {
-    const result = await tryDecodeAnchorIdlAccountBytes(raw);
-    return result.ok ? result.content : null;
 }
 
 /**
@@ -96,20 +85,38 @@ function parseIdlJson(content: string): unknown {
     }
 }
 
+// ─── Live Anchor IDL ─────────────────────────────────────────────────────────
+//
+// Two entry points over the same on-chain read, with opposite error contracts:
+//   • `fetchAnchorIdl`  — lenient: raw decompressed content, or `null` for ANY
+//     miss (no account or undecodable bytes). Never throws on bad data.
+//   • `resolveAnchorIdl` — strict: parsed + shape-validated IDL; `null` only
+//     when no IDL is published, and throws `IdlDecodeError` when an account
+//     exists but isn't a usable IDL.
+// Both read via `readAnchorIdlAccount` and let RPC/transport errors propagate.
+
+/** Derive the IDL PDA, read it, and decode its bytes — or `null` if no such account exists. */
+async function readAnchorIdlAccount(
+    rpc: SolanaRpcClient,
+    programId: Address,
+): Promise<{ address: Address; decoded: AnchorDecodeResult } | null> {
+    const address = await findAnchorIdlAddress(programId);
+    const account = await fetchEncodedAccount(rpc, address);
+    if (!account.exists) return null;
+    return { address, decoded: await decodeAnchorIdlAccount(account.data) };
+}
+
 /**
  * Resolve the live Anchor IDL for `programId`. Returns the raw decompressed
  * JSON string and the IDL account address, or `null` if no Anchor IDL is
- * published. Use {@link fetchIdl} for the higher-level PMP-first flow.
+ * published *or* the account's bytes don't decode — this never throws on bad
+ * data. Use {@link resolveAnchorIdl} when you need the parsed IDL or a typed
+ * reason for an undecodable account, or {@link fetchIdl} for the PMP-first flow.
  */
 export async function fetchAnchorIdl(rpc: SolanaRpcClient, programId: Address): Promise<AnchorIdl | null> {
-    const idlAddr = await findAnchorIdlAddress(programId);
-    const account = await fetchEncodedAccount(rpc, idlAddr);
-    if (!account.exists) return null;
-
-    const content = await decodeAnchorIdlAccountBytes(account.data);
-    if (content === null) return null;
-
-    return { address: idlAddr, content };
+    const read = await readAnchorIdlAccount(rpc, programId);
+    if (!read || !read.decoded.ok) return null;
+    return { address: read.address, content: read.decoded.content };
 }
 
 /** Result of {@link resolveAnchorIdl}: a parsed, shape-validated Anchor IDL. */
@@ -132,24 +139,22 @@ export type ResolvedAnchorIdl = {
  *
  * On success returns the IDL account address plus the parsed JSON, so callers
  * don't re-`JSON.parse` the raw string or re-validate the Anchor shape
- * themselves. Use {@link fetchAnchorIdl} when you want the raw content string
- * and `null`-on-any-failure semantics.
+ * themselves.
  */
 export async function resolveAnchorIdl(rpc: SolanaRpcClient, programId: Address): Promise<ResolvedAnchorIdl | null> {
-    const idlAddr = await findAnchorIdlAddress(programId);
-    const account = await fetchEncodedAccount(rpc, idlAddr);
-    if (!account.exists) return null;
+    const read = await readAnchorIdlAccount(rpc, programId);
+    if (!read) return null;
 
-    const decoded = await tryDecodeAnchorIdlAccountBytes(account.data);
+    const { address, decoded } = read;
     if (!decoded.ok) {
         throw decoded.reason === 'inflate'
             ? new IdlDecodeError('Anchor IDL account present but its zlib payload failed to inflate', {
-                  address: idlAddr,
+                  address,
                   cause: decoded.cause,
                   reason: 'inflate',
               })
             : new IdlDecodeError('Anchor IDL account present but bytes do not match the IdlAccount layout', {
-                  address: idlAddr,
+                  address,
                   reason: 'layout',
               });
     }
@@ -158,14 +163,14 @@ export async function resolveAnchorIdl(rpc: SolanaRpcClient, programId: Address)
     try {
         parsed = JSON.parse(decoded.content);
     } catch (cause) {
-        throw new IdlDecodeError('Decoded Anchor IDL is not valid JSON', { address: idlAddr, cause, reason: 'json' });
+        throw new IdlDecodeError('Decoded Anchor IDL is not valid JSON', { address, cause, reason: 'json' });
     }
 
     if (!parsed || typeof parsed !== 'object' || !Array.isArray((parsed as { instructions?: unknown }).instructions)) {
-        throw new IdlDecodeError('Decoded Anchor IDL has unexpected shape', { address: idlAddr, reason: 'shape' });
+        throw new IdlDecodeError('Decoded Anchor IDL has unexpected shape', { address, reason: 'shape' });
     }
 
-    return { address: idlAddr, idl: parsed };
+    return { address, idl: parsed };
 }
 
 /**
@@ -182,7 +187,8 @@ export async function resolveAnchorIdl(rpc: SolanaRpcClient, programId: Address)
 export async function fetchAnchorIdlFromBuffer(rpc: SolanaRpcClient, bufferAddress: Address): Promise<string | null> {
     const account = await fetchEncodedAccount(rpc, bufferAddress);
     if (!account.exists) return null;
-    return await decodeAnchorIdlAccountBytes(account.data);
+    const decoded = await decodeAnchorIdlAccount(account.data);
+    return decoded.ok ? decoded.content : null;
 }
 
 /**
@@ -205,8 +211,8 @@ export async function fetchIdlFromBuffer(rpc: SolanaRpcClient, bufferAddress: Ad
         return content === null ? null : { address: bufferAddress, content, type: 'pmp' };
     }
 
-    const content = await decodeAnchorIdlAccountBytes(account.data);
-    return content === null ? null : { address: bufferAddress, content, type: 'anchor' };
+    const decoded = await decodeAnchorIdlAccount(account.data);
+    return decoded.ok ? { address: bufferAddress, content: decoded.content, type: 'anchor' } : null;
 }
 
 /**
