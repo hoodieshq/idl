@@ -2,7 +2,6 @@ import {
     type Address,
     isSolanaError,
     SOLANA_ERROR__JSON_RPC__INTERNAL_ERROR,
-    SOLANA_ERROR__JSON_RPC__PARSE_ERROR,
     SOLANA_ERROR__JSON_RPC__SCAN_ERROR,
     SOLANA_ERROR__JSON_RPC__SERVER_ERROR_BLOCK_CLEANED_UP,
     SOLANA_ERROR__JSON_RPC__SERVER_ERROR_BLOCK_NOT_AVAILABLE,
@@ -70,10 +69,14 @@ export type RpcErrorClass = 'transient' | 'misconfig';
 /**
  * JSON-RPC server error codes that reflect transient node/cluster state rather
  * than a permanent fault; retrying (or surfacing as a 5xx) may succeed.
+ *
+ * Deliberately excludes the client-fault codes (`-32700` parse, `-32600`
+ * invalid request, `-32601` method not found, `-32602` invalid params): those
+ * mean the request itself is wrong, so retrying it unchanged loops forever.
+ * They fall through to `misconfig`.
  */
 const TRANSIENT_RPC_ERROR_CODES = new Set<SolanaErrorCode>([
     SOLANA_ERROR__JSON_RPC__INTERNAL_ERROR,
-    SOLANA_ERROR__JSON_RPC__PARSE_ERROR,
     SOLANA_ERROR__JSON_RPC__SCAN_ERROR,
     SOLANA_ERROR__JSON_RPC__SERVER_ERROR_BLOCK_CLEANED_UP,
     SOLANA_ERROR__JSON_RPC__SERVER_ERROR_BLOCK_NOT_AVAILABLE,

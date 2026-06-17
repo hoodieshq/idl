@@ -3,6 +3,7 @@ import { deflateSync } from 'node:zlib';
 import {
     address,
     SOLANA_ERROR__JSON_RPC__METHOD_NOT_FOUND,
+    SOLANA_ERROR__JSON_RPC__PARSE_ERROR,
     SOLANA_ERROR__JSON_RPC__SERVER_ERROR_NODE_UNHEALTHY,
     SOLANA_ERROR__RPC__TRANSPORT_HTTP_ERROR,
     SolanaError,
@@ -86,6 +87,13 @@ describe('classifyRpcError', () => {
 
     test('falls back to misconfig for a non-transient, non-transport SolanaError', () => {
         const err = new SolanaError(SOLANA_ERROR__JSON_RPC__METHOD_NOT_FOUND, { __serverMessage: 'Method not found' });
+        expect(classifyRpcError(err)).toBe('misconfig');
+        expect(isTransientRpcError(err)).toBe(false);
+    });
+
+    test('classifies a client-fault parse error (-32700) as misconfig, not transient', () => {
+        // -32700 means the server couldn't parse our request — retrying it unchanged loops forever.
+        const err = new SolanaError(SOLANA_ERROR__JSON_RPC__PARSE_ERROR, { __serverMessage: 'Parse error' });
         expect(classifyRpcError(err)).toBe('misconfig');
         expect(isTransientRpcError(err)).toBe(false);
     });
