@@ -25,7 +25,7 @@ import { findMetadataPda, type Seed } from '@solana-program/program-metadata';
 import type { Address } from '@solana/kit';
 
 import { findAnchorIdlAddress } from './anchor.js';
-import { fetchAnchorIdl, type IdlSource } from './current-idl.js';
+import { fetchAnchorIdlContent, type IdlSource } from './current-idl.js';
 import { fetchPmpIdl } from './pmp-idl.js';
 import type { SolanaRpcClient } from './rpc.js';
 
@@ -88,7 +88,7 @@ export async function fetchLatestIdls(
 
     const [pmpResolved, anchor] = await Promise.all([
         fetchPmpIdl(rpc, programId, seed, options?.authority),
-        fetchAnchorIdl(rpc, programId),
+        fetchAnchorIdlContent(rpc, programId),
     ]);
 
     const pmpMetadataAddress = pmpResolved?.address ?? pmpPdaFallback;

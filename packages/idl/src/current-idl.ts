@@ -18,9 +18,11 @@ const ANCHOR_ACCOUNT_LEN_OFFSET = 40;
 
 export type IdlSource = 'pmp' | 'anchor';
 
+/** Result of {@link fetchAnchorIdl}: a parsed, shape-validated Anchor IDL. */
 export type AnchorIdl = {
-    content: string;
     address: Address;
+    /** Parsed Anchor IDL JSON (validated to at least have an `instructions` array). */
+    idl: unknown;
 };
 
 /**
@@ -86,14 +88,6 @@ function parseIdlJson(content: string): unknown {
 }
 
 // ─── Live Anchor IDL ─────────────────────────────────────────────────────────
-//
-// Two entry points over the same on-chain read, with opposite error contracts:
-//   • `fetchAnchorIdl`  — lenient: raw decompressed content, or `null` for ANY
-//     miss (no account or undecodable bytes). Never throws on bad data.
-//   • `resolveAnchorIdl` — strict: parsed + shape-validated IDL; `null` only
-//     when no IDL is published, and throws `IdlDecodeError` when an account
-//     exists but isn't a usable IDL.
-// Both read via `readAnchorIdlAccount` and let RPC/transport errors propagate.
 
 /** Derive the IDL PDA, read it, and decode its bytes — or `null` if no such account exists. */
 async function readAnchorIdlAccount(
@@ -107,29 +101,24 @@ async function readAnchorIdlAccount(
 }
 
 /**
- * Resolve the live Anchor IDL for `programId`. Returns the raw decompressed
- * JSON string and the IDL account address, or `null` if no Anchor IDL is
- * published *or* the account's bytes don't decode — this never throws on bad
- * data. Use {@link resolveAnchorIdl} when you need the parsed IDL or a typed
- * reason for an undecodable account, or {@link fetchIdl} for the PMP-first flow.
+ * Lenient internal read: the raw decompressed IDL content + account address, or
+ * `null` for ANY miss (no account or undecodable bytes). Never throws on bad
+ * data. Backs the multi-source, never-throw flows ({@link fetchIdl} and
+ * `fetchLatestIdls`); the public {@link fetchAnchorIdl} is the strict variant.
  */
-export async function fetchAnchorIdl(rpc: SolanaRpcClient, programId: Address): Promise<AnchorIdl | null> {
+export async function fetchAnchorIdlContent(
+    rpc: SolanaRpcClient,
+    programId: Address,
+): Promise<{ address: Address; content: string } | null> {
     const read = await readAnchorIdlAccount(rpc, programId);
     if (!read || !read.decoded.ok) return null;
     return { address: read.address, content: read.decoded.content };
 }
 
-/** Result of {@link resolveAnchorIdl}: a parsed, shape-validated Anchor IDL. */
-export type ResolvedAnchorIdl = {
-    address: Address;
-    /** Parsed Anchor IDL JSON (validated to at least have an `instructions` array). */
-    idl: unknown;
-};
-
 /**
- * Strict variant of {@link fetchAnchorIdl} that distinguishes the three
- * outcomes consumers usually care about, instead of collapsing them into one
- * `null`:
+ * Resolve the live Anchor IDL for `programId`, parsed and shape-validated.
+ * Distinguishes the three outcomes consumers care about instead of collapsing
+ * them into one `null`:
  *
  *  - **No IDL published** — the derived account doesn't exist → returns `null`.
  *  - **Present but undecodable** — the account exists but its bytes aren't a
@@ -139,9 +128,9 @@ export type ResolvedAnchorIdl = {
  *
  * On success returns the IDL account address plus the parsed JSON, so callers
  * don't re-`JSON.parse` the raw string or re-validate the Anchor shape
- * themselves.
+ * themselves. Use {@link fetchIdl} for the lenient, PMP-first flow.
  */
-export async function resolveAnchorIdl(rpc: SolanaRpcClient, programId: Address): Promise<ResolvedAnchorIdl | null> {
+export async function fetchAnchorIdl(rpc: SolanaRpcClient, programId: Address): Promise<AnchorIdl | null> {
     const read = await readAnchorIdlAccount(rpc, programId);
     if (!read) return null;
 
@@ -236,7 +225,7 @@ export async function fetchIdl(
         };
     }
 
-    const anchor = await fetchAnchorIdl(rpc, programId);
+    const anchor = await fetchAnchorIdlContent(rpc, programId);
     if (anchor) {
         return {
             idl: parseIdlJson(anchor.content),

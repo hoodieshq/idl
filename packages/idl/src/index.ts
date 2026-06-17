@@ -1,12 +1,6 @@
 // ─── Headline: "give me the IDL" ─────────────────────────────────────────────
-export {
-    fetchIdl,
-    fetchAnchorIdl,
-    fetchAnchorIdlFromBuffer,
-    fetchIdlFromBuffer,
-    resolveAnchorIdl,
-} from './current-idl.js';
-export type { Idl, IdlSource, AnchorIdl, BufferIdl, ResolvedAnchorIdl } from './current-idl.js';
+export { fetchIdl, fetchAnchorIdl, fetchAnchorIdlFromBuffer, fetchIdlFromBuffer } from './current-idl.js';
+export type { Idl, IdlSource, AnchorIdl, BufferIdl } from './current-idl.js';
 
 // ─── Error handling: failure taxonomy + RPC classification ───────────────────
 export { IdlDecodeError, classifyRpcError, isTransientRpcError } from './errors.js';

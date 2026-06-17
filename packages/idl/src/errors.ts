@@ -92,7 +92,7 @@ const TRANSIENT_RPC_ERROR_CODES = new Set<SolanaErrorCode>([
 
 /**
  * Classify an error thrown out of an RPC-backed fetch (`fetchIdl`,
- * `fetchAnchorIdl`, `resolveAnchorIdl`, history reconstruction, …).
+ * `fetchAnchorIdl`, history reconstruction, …).
  *
  * Returns `null` for anything that isn't a `SolanaError` — e.g. an
  * {@link IdlDecodeError} or a programming bug — so callers can branch on

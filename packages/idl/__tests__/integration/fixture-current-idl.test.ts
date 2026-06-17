@@ -91,10 +91,8 @@ describe('fetchAnchorIdl', () => {
         const anchor = await fetchAnchorIdl(rpc, BUYUX);
 
         expect(anchor).not.toBeNull();
-        expect(typeof anchor!.content).toBe('string');
-        expect(() => JSON.parse(anchor!.content)).not.toThrow();
-        const parsed = JSON.parse(anchor!.content) as Record<string, unknown>;
-        expect(parsed).toBeTypeOf('object');
+        expect(anchor!.idl).toBeTypeOf('object');
+        expect(Array.isArray((anchor!.idl as { instructions?: unknown }).instructions)).toBe(true);
         expect(typeof anchor!.address).toBe('string');
     });
 
