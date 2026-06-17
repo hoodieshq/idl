@@ -66,7 +66,7 @@ export type RpcErrorClass = 'transient' | 'misconfig';
 
 /**
  * JSON-RPC server error codes that reflect transient node/cluster state rather
- * than a permanent fault. Mirrors the set the Explorer used inline.
+ * than a permanent fault; retrying (or surfacing as a 5xx) may succeed.
  */
 const TRANSIENT_RPC_ERROR_CODES = new Set<SolanaErrorCode>([
     SOLANA_ERROR__JSON_RPC__INTERNAL_ERROR,
