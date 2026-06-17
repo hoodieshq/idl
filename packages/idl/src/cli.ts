@@ -5,7 +5,8 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 
 import { Address, createSolanaRpc } from '@solana/kit';
 import { Command } from 'commander';
-import pc from 'picocolors';
+
+import pc from './colors.js';
 
 const PKG_VERSION: string = (() => {
     try {
@@ -371,6 +372,26 @@ async function runSingle(
 
 // ─── CLI ─────────────────────────────────────────────────────────────────────
 
+/** Public mainnet RPC; used as the silent default when nothing else is configured. */
+const PUBLIC_MAINNET_RPC = 'https://api.mainnet-beta.solana.com';
+
+/**
+ * Resolve which RPC URL the CLI should use, with a friendly fallback so
+ * `idl <pid>` works out of the box. Priority: `--rpc` > `$RPC_URL` >
+ * public mainnet (with a stderr warning, since the public endpoint
+ * rate-limits aggressively on large IDLs and history replays).
+ */
+function resolveRpcUrl(rpcFlag: string | undefined): string {
+    if (rpcFlag) return rpcFlag;
+    if (process.env.RPC_URL) return process.env.RPC_URL;
+    console.error(
+        pc.yellow(
+            `warn: no --rpc flag and no RPC_URL env var; falling back to ${PUBLIC_MAINNET_RPC} (may rate-limit on large programs or history replays)`,
+        ),
+    );
+    return PUBLIC_MAINNET_RPC;
+}
+
 /**
  * Optional dependency-injection seam used by the test suite. Production
  * callers leave this unset and the CLI falls back to `createSolanaRpc` from
@@ -392,7 +413,7 @@ export function buildProgram(options: RunCliOptions = {}): Command {
         .description(
             'Fetch on-chain IDLs for Solana programs. ' +
                 'Default: the live IDL (canonical PMP → fndn fallback PMP → Anchor). ' +
-                'Use --latest for the side-by-side payload with slot/time, --history to replay the full ' +
+                'Use --latest for the PMP + Anchor side-by-side payload, --history to replay the full ' +
                 'version history, or --buffer to decode a staging buffer account directly.',
         )
         .version(PKG_VERSION)
@@ -402,7 +423,7 @@ export function buildProgram(options: RunCliOptions = {}): Command {
         .option('-a, --authority <address>', 'Authority address (for non-canonical PMP metadata)')
         .option(
             '--latest',
-            'Print {programId, pmpAddress, anchorAddress, pmp[], anchor[]} with version/slot/time (same shape as GET /api/latest)',
+            'Print {programId, pmpAddress, anchorAddress, pmp[], anchor[]} with parsed version (same shape as GET /api/latest). For publish timing, use --history.',
         )
         .option('--history', 'Replay the full IDL version history from on-chain transactions')
         .option(
@@ -413,13 +434,7 @@ export function buildProgram(options: RunCliOptions = {}): Command {
         .option('-o, --output <dir>', '[--history only] Directory to save full snapshots')
         .option('--dump-idls <dir>', '[--history only] Directory to write each distinct IDL version')
         .action(async (programAddress: string, opts) => {
-            const rpcUrl: string | undefined = opts.rpc ?? process.env.RPC_URL;
-            if (!rpcUrl) {
-                console.error(
-                    pc.red('Error: No RPC URL provided. Use --rpc <url> or set the RPC_URL environment variable.'),
-                );
-                process.exit(1);
-            }
+            const rpcUrl = resolveRpcUrl(opts.rpc);
 
             const rpc = rpcFactory(rpcUrl);
             const addr = programAddress as Address;
@@ -476,7 +491,7 @@ export function buildProgram(options: RunCliOptions = {}): Command {
                 return;
             }
 
-            // ─── --latest (side-by-side with slot/time) ────────────────────────────
+            // ─── --latest (PMP + Anchor side-by-side) ─────────────────────────────
             if (opts.latest) {
                 const latest = await fetchLatestIdls(rpc, addr, {
                     seed,

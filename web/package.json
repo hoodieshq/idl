@@ -5,13 +5,14 @@
   "license": "MIT",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "pnpm -w run build && next build",
     "start": "next start"
   },
   "dependencies": {
     "@solana-program/program-metadata": "^0.5.1",
     "@solana/idl": "^0.1.1",
     "@solana/kit": "^6.0.0",
+    "@solana/security-txt": "workspace:*",
     "next": "^15.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
