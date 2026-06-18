@@ -17,26 +17,41 @@ import {
     type SolanaErrorCode,
 } from '@solana/kit';
 
-// ─── Decode failures ─────────────────────────────────────────────────────────
-
-/** Why an existing on-chain account could not be turned into an IDL. */
-export type IdlDecodeReason =
-    /** Bytes don't match the `IdlAccount` header/length framing. */
-    | 'layout'
-    /** Framing matched but the zlib payload failed to inflate; `cause` holds the zlib error. */
-    | 'inflate'
-    /** Decompressed content is not valid JSON; `cause` holds the `SyntaxError`. */
-    | 'json';
+// ─── Decode failures (bytes) ─────────────────────────────────────────────────
 
 /**
- * Thrown when an IDL account **exists on-chain but its bytes can't be turned
- * into a usable IDL** — corrupt/partial writes, truncated buffers, or non-IDL
- * data parked at the derived address.
+ * Why on-chain *bytes* couldn't be decoded — a byte-level failure. Distinct
+ * from {@link IdlValidationReason}, which is about decoded *content* not being
+ * a usable IDL. Note `'json'` is **not** here: content that decodes but isn't
+ * JSON is an `ok` result (the raw bytes are preserved), surfaced later as a
+ * *validation* failure (see {@link IdlValidationReason}), not a decode one.
+ */
+export type IdlDecodeReason =
+    /**
+     * The account isn't shaped like an IDL container at all — the outer
+     * structure won't parse. (Anchor: bytes don't match the `IdlAccount`
+     * header/length framing. PMP: the bytes aren't a decodable `Buffer` account,
+     * with the decode error on `cause`.)
+     */
+    | 'framing'
+    /**
+     * The container parsed, but its payload couldn't be turned into content.
+     * (Anchor: the zlib payload failed to inflate. PMP: it's empty, or no
+     * candidate encoding/compression yielded a non-empty string.) The underlying
+     * error, when there is one, is on `cause`.
+     */
+    | 'payload';
+
+/**
+ * Thrown when an IDL account **exists on-chain but its bytes can't be decoded**
+ * — corrupt/partial writes, truncated buffers, or non-IDL data parked at the
+ * derived address (a byte-level failure: `'framing'` or `'payload'`).
  *
- * This is deliberately distinct from a `null` return (no IDL published) and
- * from an RPC/transport {@link https://github.com/anza-xyz/kit SolanaError}
+ * This is deliberately distinct from a `null` return (no IDL published), from
+ * an {@link IdlValidationError} (bytes decoded but the content isn't a usable
+ * IDL), and from an RPC/transport {@link https://github.com/anza-xyz/kit SolanaError}
  * (upstream is flaky). Callers typically map this to a "present but
- * undecodable" outcome (e.g. HTTP 200 with `null` body) rather than a retry.
+ * undecodable" outcome (e.g. HTTP 422) rather than a retry.
  *
  * TODO(anza-xyz/kit#1576): build on `createCodedErrorClass` once it ships, so
  * this aligns with kit's coded-error ergonomics instead of a bespoke subclass.
@@ -52,6 +67,47 @@ export class IdlDecodeError extends Error {
         super(message, { cause: options.cause });
         this.address = options.address;
         this.reason = options.reason;
+    }
+}
+
+// ─── Validation failures (content) ───────────────────────────────────────────
+
+/**
+ * Why decoded *content* isn't a usable IDL — a validation failure, one layer
+ * above {@link IdlDecodeReason} (which is byte-level). Validation is parse +
+ * object, not full IDL-schema checking.
+ */
+export type IdlValidationReason =
+    /** Content didn't parse as JSON. */
+    | 'json'
+    /** Parsed, but isn't a JSON object (array / primitive / null). */
+    | 'shape';
+
+/**
+ * Thrown when an IDL account decoded fine but its **content isn't a usable
+ * IDL** — it didn't parse as JSON (`'json'`), or it parsed to something that
+ * isn't a JSON object (`'shape'`: an array, primitive, or `null`).
+ *
+ * Distinct from {@link IdlDecodeError}: the bytes decoded successfully (the raw
+ * text is preserved in {@link content}), so this is a *content* problem, not a
+ * byte-level one. Carries the raw `content` so callers can inspect or re-store
+ * it; `address` is optional because validation can run on content that wasn't
+ * fetched from a specific account.
+ */
+export class IdlValidationError extends Error {
+    override readonly name = 'IdlValidationError';
+    /** Which validation step failed. */
+    readonly reason: IdlValidationReason;
+    /** The raw decoded content that failed validation. */
+    readonly content: string;
+    /** Address of the account the content came from, when known. */
+    readonly address?: Address;
+
+    constructor(message: string, options: { reason: IdlValidationReason; content: string; address?: Address }) {
+        super(message);
+        this.reason = options.reason;
+        this.content = options.content;
+        this.address = options.address;
     }
 }
 
