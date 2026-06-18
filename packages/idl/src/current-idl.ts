@@ -1,15 +1,11 @@
-import { promisify } from 'node:util';
-import { inflate } from 'node:zlib';
-
 import { PROGRAM_METADATA_PROGRAM_ADDRESS, type Seed } from '@solana-program/program-metadata';
 import type { Address } from '@solana/kit';
 import { fetchEncodedAccount } from '@solana/kit';
 
 import { findAnchorIdlAddress } from './anchor.js';
+import { inflate } from './decompress.js';
 import { decodePmpIdlFromBufferAccount, fetchPmpIdl } from './pmp-idl.js';
 import { readU32LE, type SolanaRpcClient } from './rpc.js';
-
-const zlibInflate = promisify(inflate);
 
 /**
  * Anchor `IdlAccount` layout, shared by both the canonical IDL PDA and any
@@ -50,8 +46,8 @@ async function decodeAnchorIdlAccountBytes(raw: Uint8Array): Promise<string | nu
 
     const compressed = raw.slice(ANCHOR_ACCOUNT_HEADER_LEN, ANCHOR_ACCOUNT_HEADER_LEN + dataLen);
     try {
-        const decompressed = await zlibInflate(compressed);
-        return decompressed.toString('utf8');
+        const decompressed = await inflate(compressed);
+        return new TextDecoder().decode(decompressed);
     } catch {
         return null;
     }

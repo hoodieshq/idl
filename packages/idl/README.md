@@ -76,6 +76,17 @@ For a single source only, use `reconstructPmpHistory(rpc, programId, opts?)` or 
 
 Types: `Idl`, `IdlSource`, `AnchorIdl`, `BufferIdl`, `PmpIdl`, `PmpIdlLookup`, `LatestIdls`, `LatestIdlVersion`, `AllHistories`, `VirtualState`, `Snapshot`, `SolanaRpcClient`.
 
+## Browser usage
+
+`@solana/idl` is isomorphic — it runs in the browser, Node ≥ 18, and Bun with no
+polyfills. Production bundlers (`vite build`, `webpack --mode production`,
+`bun build --production`) just work. esbuild is the only one that needs a define:
+
+```jsonc
+// esbuild
+{ "define": { "process.env.NODE_ENV": "\"production\"" } }
+```
+
 ## CLI
 
 The `idl` binary mirrors the library and has four modes, each backed by the same core function the API uses:

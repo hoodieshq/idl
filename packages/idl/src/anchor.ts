@@ -1,9 +1,6 @@
-import { createHash } from 'node:crypto';
-import { promisify } from 'node:util';
-import { inflate } from 'node:zlib';
-
 import { Address, createAddressWithSeed, getProgramDerivedAddress } from '@solana/kit';
 
+import { inflate } from './decompress.js';
 import {
     fromBase58,
     readU32LE,
@@ -17,36 +14,114 @@ import {
     type ParsedTx,
 } from './rpc.js';
 
-const zlibInflate = promisify(inflate);
-
-// ─── Constants ───────────────────────────────────────────────────────────────
+// ─── Instruction discriminators ──────────────────────────────────────────────
 
 /**
- * sha256("anchor:idl") first 8 bytes, reversed to little-endian.
- * In Anchor's Rust code this is a u64 constant serialized via Borsh (LE),
- * so the on-chain bytes are the reverse of the raw SHA256 output.
+ * SHA-256 via the WHATWG WebCrypto digest (`crypto.subtle`), available in
+ * Node >= 18, browsers, and Bun — the same primitive `@solana/kit` uses for PDA
+ * derivation. Deriving the discriminators from their instruction names at
+ * runtime (the way Anchor does) keeps this module free of `node:crypto` while
+ * staying self-documenting.
  */
-const IDL_IX_TAG = Buffer.from(createHash('sha256').update('anchor:idl').digest().subarray(0, 8)).reverse();
-
-function anchorGlobalDisc(name: string): Buffer {
-    return createHash('sha256').update(`global:${name}`).digest().subarray(0, 8);
+async function sha256(input: string): Promise<Uint8Array> {
+    const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(input));
+    return new Uint8Array(digest);
 }
 
-/** New-style (Anchor >=0.30) per-instruction discriminators. */
-const GLOBAL_DISCS = {
-    close: anchorGlobalDisc('close'),
-    createBuffer: anchorGlobalDisc('create_buffer'),
-    idlClose: anchorGlobalDisc('idl_close'),
-    idlCreateBuffer: anchorGlobalDisc('idl_create_buffer'),
-    idlSetAuthority: anchorGlobalDisc('idl_set_authority'),
-    idlSetBuffer: anchorGlobalDisc('idl_set_buffer'),
-    idlWrite: anchorGlobalDisc('idl_write'),
-    setAuthority: anchorGlobalDisc('set_authority'),
-    setBuffer: anchorGlobalDisc('set_buffer'),
-    write: anchorGlobalDisc('write'),
-} as const;
+/**
+ * First 8 bytes of `sha256("global:<name>")` — an Anchor >=0.30 instruction
+ * discriminator. Uses `.slice` (not `.subarray`) so each discriminator is a
+ * standalone 8-byte buffer rather than a view over the 32-byte digest — keeps
+ * `.buffer`/`DataView` access correct and matches `idlIxTag`.
+ */
+async function anchorGlobalDisc(name: string): Promise<Uint8Array> {
+    return (await sha256(`global:${name}`)).slice(0, 8);
+}
 
-function matchDisc(data: Uint8Array, disc: Buffer): boolean {
+type GlobalDiscName =
+    | 'close'
+    | 'createBuffer'
+    | 'idlClose'
+    | 'idlCreateBuffer'
+    | 'idlSetAuthority'
+    | 'idlSetBuffer'
+    | 'idlWrite'
+    | 'setAuthority'
+    | 'setBuffer'
+    | 'write';
+
+type Discriminators = {
+    /**
+     * `sha256("anchor:idl")[:8]`, reversed to little-endian. In Anchor's Rust
+     * code this is a u64 constant serialized via Borsh (LE), so the on-chain
+     * bytes are the reverse of the raw SHA256 output.
+     */
+    idlIxTag: Uint8Array;
+    /** New-style (Anchor >=0.30) per-instruction global discriminators. */
+    global: Record<GlobalDiscName, Uint8Array>;
+};
+
+/**
+ * The discriminators are deterministic, so derive them once and memoize.
+ * Hashing is async (WebCrypto), so callers `await getDiscriminators()` before
+ * walking instruction data; every later call resolves instantly from the
+ * cached promise.
+ */
+let discriminatorsPromise: Promise<Discriminators> | null = null;
+
+export function getDiscriminators(): Promise<Discriminators> {
+    discriminatorsPromise ??= (async (): Promise<Discriminators> => {
+        const [
+            idlIxTagHash,
+            close,
+            createBuffer,
+            idlClose,
+            idlCreateBuffer,
+            idlSetAuthority,
+            idlSetBuffer,
+            idlWrite,
+            setAuthority,
+            setBuffer,
+            write,
+        ] = await Promise.all([
+            sha256('anchor:idl'),
+            anchorGlobalDisc('close'),
+            anchorGlobalDisc('create_buffer'),
+            anchorGlobalDisc('idl_close'),
+            anchorGlobalDisc('idl_create_buffer'),
+            anchorGlobalDisc('idl_set_authority'),
+            anchorGlobalDisc('idl_set_buffer'),
+            anchorGlobalDisc('idl_write'),
+            anchorGlobalDisc('set_authority'),
+            anchorGlobalDisc('set_buffer'),
+            anchorGlobalDisc('write'),
+        ]);
+
+        // Freeze the memoized snapshot so a consumer can't swap out a
+        // discriminator and corrupt matching for the lifetime of the process.
+        return Object.freeze({
+            global: Object.freeze({
+                close,
+                createBuffer,
+                idlClose,
+                idlCreateBuffer,
+                idlSetAuthority,
+                idlSetBuffer,
+                idlWrite,
+                setAuthority,
+                setBuffer,
+                write,
+            }),
+            idlIxTag: idlIxTagHash.slice(0, 8).reverse(),
+        });
+    })().catch(err => {
+        discriminatorsPromise = null;
+        throw err;
+    });
+    return discriminatorsPromise;
+}
+
+function matchDisc(data: Uint8Array, disc: Uint8Array): boolean {
     if (data.length < 8) return false;
     for (let i = 0; i < 8; i++) {
         if (data[i] !== disc[i]) return false;
@@ -54,10 +129,10 @@ function matchDisc(data: Uint8Array, disc: Buffer): boolean {
     return true;
 }
 
-function isLegacyIdlIx(data: Uint8Array): boolean {
+function isLegacyIdlIx(data: Uint8Array, idlIxTag: Uint8Array): boolean {
     if (data.length < 8) return false;
     for (let i = 0; i < 8; i++) {
-        if (data[i] !== IDL_IX_TAG[i]) return false;
+        if (data[i] !== idlIxTag[i]) return false;
     }
     return true;
 }
@@ -83,21 +158,19 @@ const LEGACY_VARIANT: Record<number, IdlIxName> = {
     4: 'SetAuthority',
 };
 
-function identifyInstruction(data: Uint8Array): { name: IdlIxName; legacy: boolean } | null {
+function identifyInstruction(data: Uint8Array, discs: Discriminators): { name: IdlIxName; legacy: boolean } | null {
     if (data.length < 8) return null;
 
-    if (matchDisc(data, GLOBAL_DISCS.createBuffer) || matchDisc(data, GLOBAL_DISCS.idlCreateBuffer))
+    const g = discs.global;
+    if (matchDisc(data, g.createBuffer) || matchDisc(data, g.idlCreateBuffer))
         return { legacy: false, name: 'CreateBuffer' };
-    if (matchDisc(data, GLOBAL_DISCS.write) || matchDisc(data, GLOBAL_DISCS.idlWrite))
-        return { legacy: false, name: 'Write' };
-    if (matchDisc(data, GLOBAL_DISCS.setBuffer) || matchDisc(data, GLOBAL_DISCS.idlSetBuffer))
-        return { legacy: false, name: 'SetBuffer' };
-    if (matchDisc(data, GLOBAL_DISCS.setAuthority) || matchDisc(data, GLOBAL_DISCS.idlSetAuthority))
+    if (matchDisc(data, g.write) || matchDisc(data, g.idlWrite)) return { legacy: false, name: 'Write' };
+    if (matchDisc(data, g.setBuffer) || matchDisc(data, g.idlSetBuffer)) return { legacy: false, name: 'SetBuffer' };
+    if (matchDisc(data, g.setAuthority) || matchDisc(data, g.idlSetAuthority))
         return { legacy: false, name: 'SetAuthority' };
-    if (matchDisc(data, GLOBAL_DISCS.close) || matchDisc(data, GLOBAL_DISCS.idlClose))
-        return { legacy: false, name: 'Close' };
+    if (matchDisc(data, g.close) || matchDisc(data, g.idlClose)) return { legacy: false, name: 'Close' };
 
-    if (isLegacyIdlIx(data) && data.length >= 9) {
+    if (isLegacyIdlIx(data, discs.idlIxTag) && data.length >= 9) {
         const variant = data[8];
         const name = LEGACY_VARIANT[variant];
         if (name) return { legacy: true, name };
@@ -146,6 +219,7 @@ async function reconstructAnchorBufferData(
     rpc: SolanaRpcClient,
     bufferAddr: Address,
     programId: Address,
+    discs: Discriminators,
 ): Promise<Uint8Array<ArrayBuffer>> {
     let data: Uint8Array<ArrayBuffer> = new Uint8Array(0);
     let writeOffset = 0;
@@ -167,7 +241,7 @@ async function reconstructAnchorBufferData(
             if (!ix.accounts.includes(targetIdx)) continue;
 
             const bytes = fromBase58(ix.data);
-            const info = identifyInstruction(bytes);
+            const info = identifyInstruction(bytes, discs);
             if (!info) continue;
 
             if (info.name === 'CreateBuffer') {
@@ -201,7 +275,7 @@ async function decodeIdlData(data: Uint8Array): Promise<string | null> {
 
     // Try direct decompression first (data is raw compressed IDL)
     try {
-        const decompressed = await zlibInflate(data);
+        const decompressed = await inflate(data);
         return new TextDecoder().decode(decompressed);
     } catch {
         // Not raw compressed data
@@ -212,7 +286,7 @@ async function decodeIdlData(data: Uint8Array): Promise<string | null> {
         const dataLen = readU32LE(data, 0);
         if (dataLen > 0 && dataLen <= data.length - 4) {
             try {
-                const decompressed = await zlibInflate(data.slice(4, 4 + dataLen));
+                const decompressed = await inflate(data.slice(4, 4 + dataLen));
                 return new TextDecoder().decode(decompressed);
             } catch {
                 // Not this format
@@ -225,7 +299,7 @@ async function decodeIdlData(data: Uint8Array): Promise<string | null> {
         const dataLen = readU32LE(data, 40);
         if (dataLen > 0 && dataLen <= data.length - 44) {
             try {
-                const decompressed = await zlibInflate(data.slice(44, 44 + dataLen));
+                const decompressed = await inflate(data.slice(44, 44 + dataLen));
                 return new TextDecoder().decode(decompressed);
             } catch {
                 // Not this format
@@ -257,6 +331,7 @@ function cloneAnchorState(s: AnchorIdlState): AnchorIdlState {
 
 export async function reconstructAnchorHistory(rpc: SolanaRpcClient, programId: Address): Promise<Snapshot[]> {
     const idlAddr = await findAnchorIdlAddress(programId);
+    const discs = await getDiscriminators();
 
     const sigs = await fetchAllSignatures(rpc, idlAddr);
     const snapshots: Snapshot[] = [];
@@ -288,7 +363,7 @@ export async function reconstructAnchorHistory(rpc: SolanaRpcClient, programId: 
 
         for (const ix of relevant) {
             const bytes = fromBase58(ix.data);
-            const info = identifyInstruction(bytes);
+            const info = identifyInstruction(bytes, discs);
             if (!info) continue;
             lastName = info.name;
 
@@ -322,7 +397,7 @@ export async function reconstructAnchorHistory(rpc: SolanaRpcClient, programId: 
                     const bufferAccIdx = ix.accounts[0];
                     const bufferAddr = keys[bufferAccIdx] as Address | undefined;
                     if (bufferAddr && bufferAccIdx !== targetIdx) {
-                        const bufData = await reconstructAnchorBufferData(rpc, bufferAddr, programId);
+                        const bufData = await reconstructAnchorBufferData(rpc, bufferAddr, programId, discs);
                         next.data = bufData;
                         next.writeOffset = bufData.length;
                     }
